@@ -4,9 +4,12 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Raj Aaryaman Patra</title>
+  <link rel="icon" type="image/png" sizes="32x32" href="favicon.png">
+  <link rel="apple-touch-icon" sizes="180x180" href="apple-touch-icon.png">
   <meta name="description" content="Personal site of Raj Aaryaman Patra — AI research, tools, and projects.">
   <meta property="og:title" content="Raj Aaryaman Patra">
   <meta property="og:description" content="AI research, tools, and projects.">
+  <meta property="og:image" content="https://rajarpatra.github.io/apple-touch-icon.png">
   <meta property="og:url" content="https://rajarpatra.github.io/">
   <meta property="og:type" content="website">
   <style>
@@ -48,11 +51,19 @@
       height: 52px;
     }
     .nav-logo {
+      display: flex;
+      align-items: center;
+      gap: 9px;
       font-weight: 700;
       font-size: 15px;
       color: var(--text);
       margin-right: auto;
       letter-spacing: -0.3px;
+    }
+    .nav-logo img {
+      width: 24px;
+      height: 24px;
+      border-radius: 6px;
     }
     .nav-logo span { color: var(--accent); }
     .nav-tab {
@@ -82,18 +93,12 @@
       text-align: center;
     }
     .avatar {
-      width: 88px;
-      height: 88px;
+      width: 80px;
+      height: 80px;
       border-radius: 50%;
-      background: linear-gradient(135deg, var(--accent), var(--accent2));
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      font-size: 36px;
-      font-weight: 700;
       margin: 0 auto 24px;
-      color: #fff;
-      box-shadow: 0 0 0 4px rgba(59,130,246,.2), 0 0 32px rgba(59,130,246,.15);
+      display: block;
+      box-shadow: 0 0 0 3px rgba(59,130,246,.25), 0 0 28px rgba(59,130,246,.12);
     }
     .hero h1 {
       font-size: 42px;
@@ -109,11 +114,10 @@
       margin-top: 14px;
       font-size: 17px;
       color: var(--muted);
-      max-width: 520px;
+      max-width: 500px;
       margin-left: auto;
       margin-right: auto;
     }
-    .hero .tagline strong { color: var(--text); font-weight: 600; }
 
     .badges {
       display: flex;
@@ -135,7 +139,7 @@
       background: var(--surface);
     }
     .badge .dot {
-      width: 7px; height: 7px;
+      width: 6px; height: 6px;
       border-radius: 50%;
     }
     .badge.blue .dot   { background: var(--accent); }
@@ -177,7 +181,13 @@
       transform: translateY(-2px);
       box-shadow: 0 8px 32px rgba(0,0,0,.3);
     }
-    .card-icon { font-size: 26px; line-height: 1; }
+    .card-icon {
+      width: 32px;
+      height: 32px;
+      color: var(--accent);
+      opacity: .85;
+    }
+    .card-icon svg { width: 100%; height: 100%; }
     .card-title {
       font-size: 15px;
       font-weight: 700;
@@ -201,7 +211,6 @@
       font-weight: 600;
       align-self: flex-start;
     }
-    .card-tag.ext { background: rgba(99,102,241,.12); color: var(--accent2); }
     .card-tag.soon { background: rgba(16,185,129,.1); color: var(--green); }
 
     /* ── AI TOOLS PAGE ── */
@@ -242,7 +251,7 @@
       overflow: hidden;
     }
     .tool-card.coming-soon {
-      opacity: .6;
+      opacity: .55;
       border-style: dashed;
     }
     .tool-card::before {
@@ -255,7 +264,13 @@
       transition: opacity .2s;
     }
     .tool-card:not(.coming-soon):hover::before { opacity: 1; }
-    .tool-icon { font-size: 30px; line-height: 1; }
+    .tool-icon {
+      width: 28px;
+      height: 28px;
+      color: var(--accent2);
+      opacity: .8;
+    }
+    .tool-icon svg { width: 100%; height: 100%; }
     .tool-name {
       font-size: 15px;
       font-weight: 700;
@@ -273,9 +288,9 @@
       border-radius: 20px;
       align-self: flex-start;
     }
-    .tool-status.live    { background: rgba(16,185,129,.12); color: var(--green); }
-    .tool-status.soon    { background: rgba(99,102,241,.12); color: var(--accent2); }
-    .tool-status.wip     { background: rgba(251,191,36,.1);  color: #fbbf24; }
+    .tool-status.live { background: rgba(16,185,129,.12); color: var(--green); }
+    .tool-status.soon { background: rgba(99,102,241,.12); color: var(--accent2); }
+    .tool-status.wip  { background: rgba(251,191,36,.1);  color: #fbbf24; }
 
     .coming-soon-notice {
       max-width: 860px;
@@ -283,14 +298,13 @@
       padding: 0 32px;
     }
     .notice-box {
-      background: rgba(99,102,241,.08);
-      border: 1px solid rgba(99,102,241,.2);
+      background: rgba(99,102,241,.07);
+      border: 1px solid rgba(99,102,241,.18);
       border-radius: var(--radius);
-      padding: 16px 20px;
+      padding: 14px 20px;
       font-size: 13.5px;
       color: var(--muted);
     }
-    .notice-box strong { color: var(--accent2); }
 
     /* ── FOOTER ── */
     footer {
@@ -320,7 +334,10 @@
 
   <!-- NAV -->
   <nav>
-    <span class="nav-logo">Raj<span>.</span></span>
+    <span class="nav-logo">
+      <img src="favicon.png" alt="">
+      Raj<span>.</span>
+    </span>
     <button class="nav-tab active" onclick="show('home',this)">Home</button>
     <button class="nav-tab"        onclick="show('tools',this)">My AI Tools</button>
   </nav>
@@ -329,44 +346,62 @@
   <div id="home" class="section active">
 
     <div class="hero">
-      <div class="avatar">R</div>
+      <img class="avatar" src="favicon.png" alt="Raj Aaryaman Patra">
       <h1>Raj Aaryaman Patra</h1>
-      <p class="tagline">
-        <strong>Incoming MBA @ Kellogg '27.</strong> Building at the intersection of
-        AI, product, and data — one experiment at a time.
-      </p>
+      <p class="tagline">Building at the intersection of AI, product, and data — one experiment at a time.</p>
       <div class="badges">
-        <span class="badge blue">  <span class="dot"></span> Kellogg MBA '27</span>
-        <span class="badge indigo"><span class="dot"></span> AI / Data</span>
-        <span class="badge green"> <span class="dot"></span> Product</span>
+        <span class="badge blue">  <span class="dot"></span> AI / Data</span>
+        <span class="badge indigo"><span class="dot"></span> Product</span>
+        <span class="badge green"> <span class="dot"></span> Open to work</span>
       </div>
     </div>
 
     <div class="card-grid">
 
       <a class="card" href="https://rajarpatra.github.io/ai-startup-research/" target="_blank">
-        <div class="card-icon">🤖</div>
+        <div class="card-icon">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round">
+            <circle cx="5" cy="6" r="2"/><circle cx="19" cy="6" r="2"/><circle cx="12" cy="18" r="2"/>
+            <line x1="7" y1="6" x2="17" y2="6"/><line x1="5" y1="8" x2="11" y2="16"/><line x1="19" y1="8" x2="13" y2="16"/>
+          </svg>
+        </div>
         <div class="card-title">AI Startup Intelligence</div>
         <div class="card-desc">Weekly auto-generated reports on AI funding rounds, foundation models, agents, and infrastructure — scraped from 11 sources.</div>
         <span class="card-tag">Live</span>
       </a>
 
       <a class="card" href="https://rajarpatra.github.io/ai-startup-research/research.html" target="_blank">
-        <div class="card-icon">📄</div>
+        <div class="card-icon">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round">
+            <path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/>
+            <polyline points="14 2 14 8 20 8"/>
+            <line x1="8" y1="13" x2="16" y2="13"/><line x1="8" y1="17" x2="12" y2="17"/>
+          </svg>
+        </div>
         <div class="card-title">AI Research Papers</div>
         <div class="card-desc">Curated weekly digest of the most impactful AI research papers, auto-summarised and categorised.</div>
         <span class="card-tag">Live</span>
       </a>
 
       <a class="card" href="https://rajarpatra.github.io/ai-startup-research/equity-research.html" target="_blank">
-        <div class="card-icon">🔬</div>
+        <div class="card-icon">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round">
+            <polyline points="22 12 18 12 15 21 9 3 6 12 2 12"/>
+          </svg>
+        </div>
         <div class="card-title">Micron Supply Chain Graph</div>
         <div class="card-desc">Interactive D3 network of 51 companies across Micron's full supply chain — suppliers to customers — with live financial data.</div>
         <span class="card-tag">Live</span>
       </a>
 
       <div class="card" style="cursor:default;">
-        <div class="card-icon">⚙️</div>
+        <div class="card-icon">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round">
+            <circle cx="12" cy="12" r="3"/>
+            <path d="M19.07 4.93a10 10 0 0 1 0 14.14M4.93 4.93a10 10 0 0 0 0 14.14"/>
+            <path d="M15.54 8.46a5 5 0 0 1 0 7.07M8.46 8.46a5 5 0 0 0 0 7.07"/>
+          </svg>
+        </div>
         <div class="card-title">My AI Tools</div>
         <div class="card-desc">Personal tools and automations I've built with Claude — research pipelines, media organisers, and more.</div>
         <span class="card-tag soon">Coming soon</span>
@@ -394,35 +429,52 @@
 
     <div class="coming-soon-notice">
       <div class="notice-box">
-        <strong>🚧 Coming soon</strong> — This section is being set up. Tools will be added here as they're ready to share.
+        This section is being set up. Tools will be added here as they're ready to share.
       </div>
     </div>
 
     <div class="tools-grid">
 
       <div class="tool-card coming-soon">
-        <div class="tool-icon">🎬</div>
+        <div class="tool-icon">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round">
+            <polygon points="23 7 16 12 23 17 23 7"/><rect x="1" y="5" width="15" height="14" rx="2" ry="2"/>
+          </svg>
+        </div>
         <div class="tool-name">Media Organiser</div>
         <div class="tool-desc">Auto-transcribes, names, and creates PDF summaries for all recordings — built on Whisper + Claude.</div>
         <span class="tool-status wip">In use</span>
       </div>
 
       <div class="tool-card coming-soon">
-        <div class="tool-icon">📈</div>
+        <div class="tool-icon">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round">
+            <line x1="18" y1="20" x2="18" y2="10"/><line x1="12" y1="20" x2="12" y2="4"/><line x1="6" y1="20" x2="6" y2="14"/>
+          </svg>
+        </div>
         <div class="tool-name">Supply Chain Pipeline</div>
         <div class="tool-desc">Pulls financials from SEC EDGAR + yfinance for 50+ companies across any target's supply chain. FX-adjusted, visualised in D3.</div>
         <span class="tool-status wip">In use</span>
       </div>
 
       <div class="tool-card coming-soon">
-        <div class="tool-icon">📰</div>
+        <div class="tool-icon">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round">
+            <path d="M4 4h16c1.1 0 2 .9 2 2v12c0 1.1-.9 2-2 2H4c-1.1 0-2-.9-2-2V6c0-1.1.9-2 2-2z"/>
+            <polyline points="22,6 12,13 2,6"/>
+          </svg>
+        </div>
         <div class="tool-name">AI Research Digest</div>
         <div class="tool-desc">Weekly GitHub Action that scrapes 11 sources, summarises papers and funding news with Gemini, and publishes to GitHub Pages.</div>
         <span class="tool-status wip">In use</span>
       </div>
 
       <div class="tool-card coming-soon">
-        <div class="tool-icon">✦</div>
+        <div class="tool-icon">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round">
+            <line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/>
+          </svg>
+        </div>
         <div class="tool-name">More coming</div>
         <div class="tool-desc">More tools will be added here over time.</div>
         <span class="tool-status soon">Soon</span>
