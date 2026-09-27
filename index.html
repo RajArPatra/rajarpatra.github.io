@@ -1,499 +1,446 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Raj Aaryaman Patra</title>
-  <link rel="icon" type="image/png" sizes="32x32" href="favicon.png">
-  <link rel="apple-touch-icon" sizes="180x180" href="apple-touch-icon.png">
-  <meta name="description" content="Personal site of Raj Aaryaman Patra — AI research, tools, and projects.">
-  <meta property="og:title" content="Raj Aaryaman Patra">
-  <meta property="og:description" content="AI research, tools, and projects.">
-  <meta property="og:image" content="https://rajarpatra.github.io/apple-touch-icon.png">
-  <meta property="og:url" content="https://rajarpatra.github.io/">
-  <meta property="og:type" content="website">
-  <style>
-    :root {
-      --bg:       #080b14;
-      --surface:  #0e1220;
-      --border:   #1e2740;
-      --accent:   #3b82f6;
-      --accent2:  #6366f1;
-      --text:     #e2e8f0;
-      --muted:    #8892a4;
-      --muted2:   #4b5568;
-      --green:    #10b981;
-      --radius:   12px;
-    }
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Raj Aaryaman Patra</title>
+<meta name="description" content="Raj Aaryaman Patra. Automated research pipelines, data visualisation, and on-device tools.">
+<link rel="icon" type="image/png" sizes="32x32" href="favicon.png">
+<link rel="apple-touch-icon" sizes="180x180" href="apple-touch-icon.png">
+<meta property="og:title" content="Raj Aaryaman Patra">
+<meta property="og:description" content="Automated research pipelines, data visualisation, and on-device tools.">
+<meta property="og:image" content="https://rajarpatra.github.io/apple-touch-icon.png">
+<meta property="og:url" content="https://rajarpatra.github.io/">
+<meta property="og:type" content="website">
+<meta name="theme-color" content="#E0DFDD">
 
-    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=Montserrat:wght@100..900&family=Nothing+You+Could+Do&display=swap" rel="stylesheet">
 
-    body {
-      background: var(--bg);
-      color: var(--text);
-      font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', system-ui, sans-serif;
-      min-height: 100vh;
-      line-height: 1.6;
-    }
+<style>
+/* ─────────── TOKENS ─────────── */
+:root{
+  --bg:#E0DFDD;
+  --ink:#121010;
+  --mid:#A5A5A5;
+  --body:#646362;
+  --rule:#757575;
+  --gutter:30px;
+  --hero-overlap:18px;    /* rest gap under the name; scroll closes it */
+  --ease:cubic-bezier(.22,.8,.3,1);
+  --overshoot:cubic-bezier(.175,.885,.32,1.275);
+}
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+html{scroll-behavior:smooth}
+body{
+  background:var(--bg);color:var(--ink);
+  font-family:Montserrat,sans-serif;font-size:18px;line-height:1.3;
+  font-variation-settings:"wght" 400;
+  -webkit-font-smoothing:antialiased;overflow-x:hidden;
+}
+img{display:block;max-width:100%;height:auto}
+a{color:inherit}
+:focus-visible{outline:2px solid var(--ink);outline-offset:4px}
 
-    /* ── NAV ── */
-    nav {
-      position: sticky;
-      top: 0;
-      z-index: 50;
-      background: rgba(8, 11, 20, 0.85);
-      backdrop-filter: blur(12px);
-      border-bottom: 1px solid var(--border);
-      display: flex;
-      align-items: center;
-      gap: 4px;
-      padding: 0 32px;
-      height: 52px;
-    }
-    .nav-logo {
-      display: flex;
-      align-items: center;
-      gap: 9px;
-      font-weight: 700;
-      font-size: 15px;
-      color: var(--text);
-      margin-right: auto;
-      letter-spacing: -0.3px;
-    }
-    .nav-logo img {
-      width: 24px;
-      height: 24px;
-      border-radius: 6px;
-    }
-    .nav-logo span { color: var(--accent); }
-    .nav-tab {
-      padding: 6px 16px;
-      border-radius: 8px;
-      font-size: 13.5px;
-      color: var(--muted);
-      text-decoration: none;
-      border: none;
-      background: none;
-      cursor: pointer;
-      transition: color .15s, background .15s;
-      white-space: nowrap;
-    }
-    .nav-tab:hover { color: var(--text); background: rgba(255,255,255,.05); }
-    .nav-tab.active { color: var(--text); background: rgba(59,130,246,.15); }
+.hand{font-family:'Nothing You Could Do',cursive;font-weight:400}
+.meta{font-family:'Bebas Neue',sans-serif;font-size:15px;letter-spacing:.04em}
+.skip{position:absolute;left:-9999px;top:0;background:var(--ink);color:var(--bg);padding:10px 16px;z-index:100}
+.skip:focus{left:var(--gutter);top:12px}
 
-    /* ── SECTIONS ── */
-    .section { display: none; }
-    .section.active { display: block; }
+/* ─────────── NAV ─────────── */
+nav{
+  position:fixed;top:0;left:0;right:0;z-index:60;
+  display:flex;justify-content:space-between;align-items:center;
+  padding:22px var(--gutter);gap:20px;
+  transition:transform .5s var(--ease), opacity .4s;
+}
+nav.hide{transform:translateY(-120%);opacity:0}
+nav::before{content:"";position:absolute;inset:0;background:var(--bg);
+  opacity:0;transition:opacity .4s;z-index:-1}
+nav.solid::before{opacity:.94;backdrop-filter:blur(8px);-webkit-backdrop-filter:blur(8px)}
+.monogram{font-family:'Nothing You Could Do',cursive;font-size:26px;text-decoration:none;line-height:1}
+.nav-links{display:flex;gap:26px;flex-shrink:0}
+.nav-link{
+  text-decoration:none;font-size:17px;
+  font-variation-settings:"wght" 500;
+  transition:font-variation-settings .4s var(--overshoot), color .325s;
+}
+.nav-link:hover,.nav-link:focus-visible{font-variation-settings:"wght" 800;color:#000}
 
-    /* ── HERO ── */
-    .hero {
-      max-width: 860px;
-      margin: 80px auto 0;
-      padding: 0 32px;
-      text-align: center;
-    }
-    .avatar {
-      width: 80px;
-      height: 80px;
-      border-radius: 50%;
-      margin: 0 auto 24px;
-      display: block;
-      box-shadow: 0 0 0 3px rgba(59,130,246,.25), 0 0 28px rgba(59,130,246,.12);
-    }
-    .hero h1 {
-      font-size: 42px;
-      font-weight: 800;
-      letter-spacing: -1.2px;
-      background: linear-gradient(135deg, #e2e8f0 30%, #6366f1);
-      -webkit-background-clip: text;
-      -webkit-text-fill-color: transparent;
-      background-clip: text;
-      line-height: 1.1;
-    }
-    .hero .tagline {
-      margin-top: 14px;
-      font-size: 17px;
-      color: var(--muted);
-      max-width: 500px;
-      margin-left: auto;
-      margin-right: auto;
-    }
+/* ─────────── HERO ─────────── */
+.hero{
+  min-height:100svh;display:flex;flex-direction:column;
+  justify-content:center;align-items:center;
+  position:relative;padding:96px var(--gutter) 0;
+}
+.hero-name{
+  font-size:clamp(30px,6.4vw,128px);line-height:.98;
+  white-space:nowrap;text-wrap:balance;
+  text-transform:uppercase;font-variation-settings:"wght" 400;
+  text-align:center;position:relative;z-index:1;
+  will-change:transform;
+}
+.hero picture{display:contents}
+.hero-img{
+  max-height:56svh;width:auto;
+  max-width:min(400px,58vw);margin-top:var(--hero-overlap);
+  position:relative;z-index:3;will-change:transform;
+  filter:grayscale(.1);
+}
+.hero-note{
+  position:absolute;left:var(--gutter);bottom:11vh;
+  max-width:330px;color:var(--body);font-size:18px;z-index:10;
+}
+.scroll-cue{
+  position:absolute;right:var(--gutter);bottom:11vh;z-index:10;
+  display:flex;flex-direction:column;align-items:center;gap:10px;color:var(--body);
+}
+.cue-line{width:1px;height:46px;background:var(--rule);transform-origin:top;animation:cue 2.4s var(--ease) infinite}
+@keyframes cue{0%{transform:scaleY(0)}45%{transform:scaleY(1)}100%{transform:scaleY(0);transform-origin:bottom}}
 
-    .badges {
-      display: flex;
-      gap: 10px;
-      justify-content: center;
-      flex-wrap: wrap;
-      margin-top: 24px;
-    }
-    .badge {
-      display: inline-flex;
-      align-items: center;
-      gap: 6px;
-      padding: 5px 13px;
-      border-radius: 20px;
-      font-size: 12.5px;
-      font-weight: 500;
-      border: 1px solid var(--border);
-      color: var(--muted);
-      background: var(--surface);
-    }
-    .badge .dot {
-      width: 6px; height: 6px;
-      border-radius: 50%;
-    }
-    .badge.blue .dot   { background: var(--accent); }
-    .badge.indigo .dot { background: var(--accent2); }
-    .badge.green .dot  { background: var(--green); }
+/* ─────────── SECTIONS ─────────── */
+.section{padding:0 var(--gutter);scroll-margin-top:90px}
+.section-head{
+  display:flex;align-items:baseline;gap:16px;
+  margin-bottom:46px;padding-top:16vh;
+}
+.section-head .hand{font-size:22px}
+.section-head .count{margin-left:auto;color:var(--mid)}
 
-    /* ── CARDS GRID ── */
-    .card-grid {
-      max-width: 860px;
-      margin: 56px auto 0;
-      padding: 0 32px;
-      display: grid;
-      grid-template-columns: repeat(auto-fill, minmax(240px, 1fr));
-      gap: 16px;
-    }
-    .card {
-      background: var(--surface);
-      border: 1px solid var(--border);
-      border-radius: var(--radius);
-      padding: 22px;
-      text-decoration: none;
-      color: inherit;
-      display: flex;
-      flex-direction: column;
-      gap: 8px;
-      transition: border-color .2s, transform .2s, box-shadow .2s;
-      position: relative;
-      overflow: hidden;
-    }
-    .card::before {
-      content: '';
-      position: absolute;
-      inset: 0;
-      background: linear-gradient(135deg, rgba(59,130,246,.04), transparent 60%);
-      pointer-events: none;
-    }
-    .card:hover {
-      border-color: rgba(59,130,246,.4);
-      transform: translateY(-2px);
-      box-shadow: 0 8px 32px rgba(0,0,0,.3);
-    }
-    .card-icon {
-      width: 32px;
-      height: 32px;
-      color: var(--accent);
-      opacity: .85;
-    }
-    .card-icon svg { width: 100%; height: 100%; }
-    .card-title {
-      font-size: 15px;
-      font-weight: 700;
-      color: var(--text);
-      margin-top: 4px;
-    }
-    .card-desc {
-      font-size: 13px;
-      color: var(--muted);
-      line-height: 1.5;
-      flex: 1;
-    }
-    .card-tag {
-      display: inline-block;
-      margin-top: 6px;
-      font-size: 11px;
-      padding: 3px 9px;
-      border-radius: 20px;
-      background: rgba(59,130,246,.12);
-      color: var(--accent);
-      font-weight: 600;
-      align-self: flex-start;
-    }
-    .card-tag.soon { background: rgba(16,185,129,.1); color: var(--green); }
+/* ─────────── ROW LIST ─────────── */
+.row{
+  display:grid;grid-template-columns:.4fr 1.9fr 1.1fr;gap:16px;align-items:start;
+  padding:26px 0 30px;border-bottom:1px solid var(--rule);
+  position:relative;text-decoration:none;color:inherit;
+}
+.row:first-of-type{border-top:1px solid var(--rule)}
+.row-idx{font-family:'Bebas Neue',sans-serif;font-size:17px;color:var(--mid);padding-top:10px;transition:color .325s}
+.row-title{
+  display:block;font-size:clamp(26px,3.1vw,42px);line-height:1.05;
+  font-variation-settings:"wght" 400;
+  transition:font-variation-settings .4s var(--ease), color .325s;
+}
+.row-stack{display:block;margin-top:10px;color:var(--mid);font-size:13px;letter-spacing:.02em;transition:color .325s}
+.row-desc{display:block;font-size:17px;color:var(--body);line-height:1.35;padding-top:8px;max-width:38ch}
+.row-arrow{
+  position:absolute;right:0;top:34px;font-size:26px;color:var(--mid);
+  opacity:0;transform:translate(-10px,10px);
+  transition:opacity .35s var(--ease),transform .45s var(--ease);
+}
+.row[href]:hover .row-arrow,.row[href]:focus-visible .row-arrow{opacity:1;transform:translate(0,0)}
+.row[href]:hover .row-title,.row[href]:focus-visible .row-title{font-variation-settings:"wght" 660}
+.row[href]:hover .row-idx,.row[href]:hover .row-stack{color:var(--ink)}
+.row:not([href]){cursor:default}
+.row:not([href]):hover .row-title{font-variation-settings:"wght" 560}
 
-    /* ── AI TOOLS PAGE ── */
-    .page-header {
-      max-width: 860px;
-      margin: 64px auto 0;
-      padding: 0 32px;
-    }
-    .page-header h2 {
-      font-size: 28px;
-      font-weight: 800;
-      letter-spacing: -0.6px;
-    }
-    .page-header p {
-      margin-top: 8px;
-      color: var(--muted);
-      font-size: 14.5px;
-    }
+/* optional screenshot preview: add data-img="file.png" to a .row to enable */
+.row-img{
+  position:absolute;top:50%;left:50%;width:220px;aspect-ratio:4/5;
+  object-fit:cover;opacity:0;pointer-events:none;z-index:20;
+  transform:translate(-50%,-50%) perspective(1500px) rotateX(16px) rotateY(-24px) scale(.86);
+  transition:opacity .35s var(--ease), transform .5s var(--ease);
+}
+.row:hover .row-img{opacity:1;transform:translate(-50%,-50%) perspective(1500px) rotateX(0) rotateY(0) scale(1)}
 
-    .tools-grid {
-      max-width: 860px;
-      margin: 36px auto 0;
-      padding: 0 32px;
-      display: grid;
-      grid-template-columns: repeat(auto-fill, minmax(260px, 1fr));
-      gap: 16px;
-    }
+/* ─────────── ABOUT ─────────── */
+.about-body{max-width:640px;font-size:clamp(20px,2.2vw,30px);line-height:1.35;font-variation-settings:"wght" 300}
+.about-body p+p{margin-top:24px}
 
-    .tool-card {
-      background: var(--surface);
-      border: 1px solid var(--border);
-      border-radius: var(--radius);
-      padding: 24px;
-      display: flex;
-      flex-direction: column;
-      gap: 10px;
-      position: relative;
-      overflow: hidden;
-    }
-    .tool-card.coming-soon {
-      opacity: .55;
-      border-style: dashed;
-    }
-    .tool-card::before {
-      content: '';
-      position: absolute;
-      top: 0; left: 0; right: 0;
-      height: 2px;
-      background: linear-gradient(90deg, var(--accent), var(--accent2));
-      opacity: 0;
-      transition: opacity .2s;
-    }
-    .tool-card:not(.coming-soon):hover::before { opacity: 1; }
-    .tool-icon {
-      width: 28px;
-      height: 28px;
-      color: var(--accent2);
-      opacity: .8;
-    }
-    .tool-icon svg { width: 100%; height: 100%; }
-    .tool-name {
-      font-size: 15px;
-      font-weight: 700;
-    }
-    .tool-desc {
-      font-size: 13px;
-      color: var(--muted);
-      line-height: 1.5;
-      flex: 1;
-    }
-    .tool-status {
-      font-size: 11px;
-      font-weight: 600;
-      padding: 3px 9px;
-      border-radius: 20px;
-      align-self: flex-start;
-    }
-    .tool-status.live { background: rgba(16,185,129,.12); color: var(--green); }
-    .tool-status.soon { background: rgba(99,102,241,.12); color: var(--accent2); }
-    .tool-status.wip  { background: rgba(251,191,36,.1);  color: #fbbf24; }
+/* ─────────── SCROLL-FILL FOOTER ─────────── */
+.fill-block{padding:16vh var(--gutter) 0}
+.fill-line{position:relative;font-size:clamp(34px,7.4vw,104px);line-height:1.12;white-space:nowrap}
+.fill-grey{color:var(--mid);font-variation-settings:"wght" 400}
+.fill-ink{position:absolute;left:0;top:0;color:var(--ink);width:0;overflow:hidden;white-space:nowrap;font-variation-settings:"wght" 400}
 
-    .coming-soon-notice {
-      max-width: 860px;
-      margin: 20px auto 0;
-      padding: 0 32px;
-    }
-    .notice-box {
-      background: rgba(99,102,241,.07);
-      border: 1px solid rgba(99,102,241,.18);
-      border-radius: var(--radius);
-      padding: 14px 20px;
-      font-size: 13.5px;
-      color: var(--muted);
-    }
+footer{padding:0 var(--gutter) 56px}
+.footer-grid{display:grid;grid-template-columns:1fr auto;gap:16px;align-items:end;padding-top:90px}
+.mail{
+  font-size:clamp(22px,3.8vw,52px);text-decoration:none;display:inline-block;
+  font-variation-settings:"wght" 400;transition:font-variation-settings .4s var(--ease)
+}
+.mail:hover{font-variation-settings:"wght" 640}
+.social{display:flex;gap:34px;margin-top:22px}
+.social a{
+  text-decoration:none;font-size:17px;color:var(--body);
+  font-variation-settings:"wght" 500;
+  transition:font-variation-settings .4s var(--ease),color .325s
+}
+.social a:hover{color:var(--ink);font-variation-settings:"wght" 750}
+.to-top{
+  width:80px;height:180px;border:2px solid var(--ink);border-radius:200px;
+  display:flex;align-items:flex-end;justify-content:center;padding-bottom:22px;
+  text-decoration:none;font-size:22px;transition:background-color .45s
+}
+.to-top:hover{background:#CECECE}
+.f-rule{height:1px;background:var(--mid);opacity:.49;margin:38px 0}
+.f-base{display:flex;justify-content:space-between;gap:16px;color:var(--body)}
 
-    /* ── FOOTER ── */
-    footer {
-      max-width: 860px;
-      margin: 80px auto 0;
-      padding: 24px 32px;
-      border-top: 1px solid var(--border);
-      display: flex;
-      align-items: center;
-      justify-content: space-between;
-      font-size: 12.5px;
-      color: var(--muted2);
-    }
-    .footer-links { display: flex; gap: 20px; }
-    .footer-links a { color: var(--muted2); text-decoration: none; transition: color .15s; }
-    .footer-links a:hover { color: var(--muted); }
+/* ─────────── MOTION ─────────── */
+.reveal{opacity:0;transform:translateY(26px);
+  transition:opacity .75s var(--ease),transform .75s var(--ease)}
+.reveal.in{opacity:1;transform:none}
 
-    @media (max-width: 600px) {
-      .hero h1 { font-size: 30px; }
-      .hero { margin-top: 48px; }
-      nav { padding: 0 16px; }
-      .card-grid, .tools-grid, .page-header, .coming-soon-notice, footer { padding: 0 16px; }
-    }
-  </style>
+@media (prefers-reduced-motion: reduce){
+  html{scroll-behavior:auto}
+  *,*::before,*::after{transition-duration:.01ms !important;animation:none !important}
+  .reveal{opacity:1;transform:none}
+}
+
+/* ─────────── RESPONSIVE ─────────── */
+@media(max-width:900px){
+  :root{--hero-overlap:14px}
+  .row{grid-template-columns:.4fr 1.6fr;row-gap:4px}
+  .row-desc{grid-column:2;max-width:none;padding-top:12px}
+  .row-arrow{top:26px}
+}
+@media(max-width:600px){
+  :root{--gutter:18px;--hero-overlap:10px}
+  .monogram{font-size:22px}
+  .nav-link{font-size:15px}
+  .nav-links{gap:16px}
+  nav{padding:16px var(--gutter)}
+  .hero-note,.scroll-cue{position:static;margin-top:34px;text-align:left;max-width:none}
+  .scroll-cue{display:none}
+  .hero{padding-top:110px;padding-bottom:60px;min-height:auto}
+  .hero-name{font-size:14vw;line-height:1.02;white-space:normal}
+  .section-head{padding-top:12vh;flex-wrap:wrap;gap:8px}
+  .section-head .count{margin-left:0;width:100%}
+  .row{grid-template-columns:1fr;padding:20px 0 24px}
+  .row-idx{padding-top:0}
+  .row-desc{grid-column:1;max-width:none}
+  .row-arrow{display:none}
+  .footer-grid{grid-template-columns:1fr}
+  .to-top{width:60px;height:120px;justify-self:start;margin-top:30px}
+  .f-base{flex-direction:column;gap:8px}
+}
+@media(min-width:1440px){ .row-img{width:300px} }
+</style>
 </head>
+
 <body>
+<a class="skip" href="#work">Skip to work</a>
 
-  <!-- NAV -->
-  <nav>
-    <span class="nav-logo">
-      <img src="favicon.png" alt="">
-      Raj<span>.</span>
-    </span>
-    <button class="nav-tab active" onclick="show('home',this)">Home</button>
-    <button class="nav-tab"        onclick="show('tools',this)">My AI Tools</button>
-  </nav>
+<nav id="nav">
+  <a class="monogram" href="#top" aria-label="Raj Aaryaman Patra, top of page">RAP</a>
+  <div class="nav-links">
+    <a class="nav-link" href="#work">Work</a>
+    <a class="nav-link" href="#tools">Tools</a>
+    <a class="nav-link" href="#about">About</a>
+  </div>
+</nav>
 
-  <!-- ══════════════ HOME ══════════════ -->
-  <div id="home" class="section active">
+<main id="top">
 
-    <div class="hero">
-      <img class="avatar" src="avatar.png" alt="Raj Aaryaman Patra">
-      <h1>Raj Aaryaman Patra</h1>
+  <!-- ══ HERO ══ -->
+  <section class="hero">
+    <h1 class="hero-name" id="heroName">Raj Aaryaman Patra</h1>
+    <picture>
+      <source srcset="avatar-cut.webp" type="image/webp">
+      <img class="hero-img" id="heroImg" src="avatar-cut.png" alt="Illustrated portrait of Raj Aaryaman Patra" width="720" height="720" fetchpriority="high">
+    </picture>
+    <p class="hero-note">I build automated research pipelines. Things that read the internet on a schedule so I don't have to.</p>
+    <div class="scroll-cue"><span class="meta">Scroll</span><span class="cue-line"></span></div>
+  </section>
+
+  <!-- ══ WORK ══ -->
+  <section class="section" id="work">
+    <div class="section-head reveal">
+      <span class="hand">[ selected work ]</span>
+      <span class="meta count">Three live</span>
     </div>
 
-    <div class="card-grid">
+    <a class="row reveal" href="https://rajarpatra.github.io/ai-startup-research/" target="_blank" rel="noopener">
+      <span class="row-idx">01</span>
+      <span>
+        <span class="row-title">AI Startup Intelligence</span>
+        <span class="row-stack meta">Python · GitHub Actions · Gemini</span>
+      </span>
+      <span class="row-desc">Weekly auto-generated reports on AI funding rounds, foundation models, agents and infrastructure, scraped from eleven sources.</span>
+      <span class="row-arrow" aria-hidden="true">↗</span>
+    </a>
 
-      <a class="card" href="https://rajarpatra.github.io/ai-startup-research/" target="_blank">
-        <div class="card-icon">
-          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round">
-            <circle cx="5" cy="6" r="2"/><circle cx="19" cy="6" r="2"/><circle cx="12" cy="18" r="2"/>
-            <line x1="7" y1="6" x2="17" y2="6"/><line x1="5" y1="8" x2="11" y2="16"/><line x1="19" y1="8" x2="13" y2="16"/>
-          </svg>
-        </div>
-        <div class="card-title">AI Startup Intelligence</div>
-        <div class="card-desc">Weekly auto-generated reports on AI funding rounds, foundation models, agents, and infrastructure — scraped from 11 sources.</div>
-        <span class="card-tag">Live</span>
-      </a>
+    <a class="row reveal" href="https://rajarpatra.github.io/ai-startup-research/research.html" target="_blank" rel="noopener">
+      <span class="row-idx">02</span>
+      <span>
+        <span class="row-title">AI Research Papers</span>
+        <span class="row-stack meta">Python · Gemini · GitHub Pages</span>
+      </span>
+      <span class="row-desc">A curated weekly digest of the most consequential AI papers, summarised and categorised without me touching it.</span>
+      <span class="row-arrow" aria-hidden="true">↗</span>
+    </a>
 
-      <a class="card" href="https://rajarpatra.github.io/ai-startup-research/research.html" target="_blank">
-        <div class="card-icon">
-          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round">
-            <path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/>
-            <polyline points="14 2 14 8 20 8"/>
-            <line x1="8" y1="13" x2="16" y2="13"/><line x1="8" y1="17" x2="12" y2="17"/>
-          </svg>
-        </div>
-        <div class="card-title">AI Research Papers</div>
-        <div class="card-desc">Curated weekly digest of the most impactful AI research papers, auto-summarised and categorised.</div>
-        <span class="card-tag">Live</span>
-      </a>
+    <a class="row reveal" href="https://rajarpatra.github.io/ai-startup-research/equity-research.html" target="_blank" rel="noopener">
+      <span class="row-idx">03</span>
+      <span>
+        <span class="row-title">Micron Supply Chain Graph</span>
+        <span class="row-stack meta">D3.js · SEC EDGAR · yfinance</span>
+      </span>
+      <span class="row-desc">An interactive network of 51 companies across Micron's full supply chain, suppliers through to customers, wired to live financials.</span>
+      <span class="row-arrow" aria-hidden="true">↗</span>
+    </a>
+  </section>
 
-      <a class="card" href="https://rajarpatra.github.io/ai-startup-research/equity-research.html" target="_blank">
-        <div class="card-icon">
-          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round">
-            <polyline points="22 12 18 12 15 21 9 3 6 12 2 12"/>
-          </svg>
-        </div>
-        <div class="card-title">Micron Supply Chain Graph</div>
-        <div class="card-desc">Interactive D3 network of 51 companies across Micron's full supply chain — suppliers to customers — with live financial data.</div>
-        <span class="card-tag">Live</span>
-      </a>
-
-      <div class="card" style="cursor:default;">
-        <div class="card-icon">
-          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round">
-            <circle cx="12" cy="12" r="3"/>
-            <path d="M19.07 4.93a10 10 0 0 1 0 14.14M4.93 4.93a10 10 0 0 0 0 14.14"/>
-            <path d="M15.54 8.46a5 5 0 0 1 0 7.07M8.46 8.46a5 5 0 0 0 0 7.07"/>
-          </svg>
-        </div>
-        <div class="card-title">My AI Tools</div>
-        <div class="card-desc">Personal tools and automations I've built with Claude — research pipelines, media organisers, and more.</div>
-        <span class="card-tag soon">Coming soon</span>
-      </div>
-
+  <!-- ══ TOOLS ══ -->
+  <section class="section" id="tools">
+    <div class="section-head reveal">
+      <span class="hand">[ things I run daily ]</span>
+      <span class="meta count">Built for myself</span>
     </div>
 
-    <footer>
-      <span>© 2026 Raj Aaryaman Patra</span>
-      <div class="footer-links">
-        <a href="https://github.com/RajArPatra" target="_blank">GitHub</a>
-        <a href="https://www.linkedin.com/in/raj-aaryaman-p" target="_blank">LinkedIn</a>
-      </div>
-    </footer>
-
-  </div><!-- /home -->
-
-  <!-- ══════════════ MY AI TOOLS ══════════════ -->
-  <div id="tools" class="section">
-
-    <div class="page-header">
-      <h2>My AI Tools</h2>
-      <p>Personal tools and automations I've built — mostly with Claude as the backbone.</p>
+    <div class="row reveal">
+      <span class="row-idx">01</span>
+      <span>
+        <span class="row-title">scribe</span>
+        <span class="row-stack meta">Apple Speech.framework · yap · yt-dlp</span>
+      </span>
+      <span class="row-desc">A macOS CLI that takes any audio or video URL and transcribes it entirely on-device. Nothing is ever uploaded.</span>
     </div>
 
-    <div class="coming-soon-notice">
-      <div class="notice-box">
-        This section is being set up. Tools will be added here as they're ready to share.
-      </div>
+    <div class="row reveal">
+      <span class="row-idx">02</span>
+      <span>
+        <span class="row-title">insta-transcripts</span>
+        <span class="row-stack meta">MCP server · Python</span>
+      </span>
+      <span class="row-desc">The same pipeline handed to Claude as an MCP server. Give it a public link, get the transcript back in the conversation.</span>
     </div>
 
-    <div class="tools-grid">
-
-      <div class="tool-card coming-soon">
-        <div class="tool-icon">
-          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round">
-            <polygon points="23 7 16 12 23 17 23 7"/><rect x="1" y="5" width="15" height="14" rx="2" ry="2"/>
-          </svg>
-        </div>
-        <div class="tool-name">Media Organiser</div>
-        <div class="tool-desc">Auto-transcribes, names, and creates PDF summaries for all recordings — built on Whisper + Claude.</div>
-        <span class="tool-status wip">In use</span>
-      </div>
-
-      <div class="tool-card coming-soon">
-        <div class="tool-icon">
-          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round">
-            <line x1="18" y1="20" x2="18" y2="10"/><line x1="12" y1="20" x2="12" y2="4"/><line x1="6" y1="20" x2="6" y2="14"/>
-          </svg>
-        </div>
-        <div class="tool-name">Supply Chain Pipeline</div>
-        <div class="tool-desc">Pulls financials from SEC EDGAR + yfinance for 50+ companies across any target's supply chain. FX-adjusted, visualised in D3.</div>
-        <span class="tool-status wip">In use</span>
-      </div>
-
-      <div class="tool-card coming-soon">
-        <div class="tool-icon">
-          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round">
-            <path d="M4 4h16c1.1 0 2 .9 2 2v12c0 1.1-.9 2-2 2H4c-1.1 0-2-.9-2-2V6c0-1.1.9-2 2-2z"/>
-            <polyline points="22,6 12,13 2,6"/>
-          </svg>
-        </div>
-        <div class="tool-name">AI Research Digest</div>
-        <div class="tool-desc">Weekly GitHub Action that scrapes 11 sources, summarises papers and funding news with Gemini, and publishes to GitHub Pages.</div>
-        <span class="tool-status wip">In use</span>
-      </div>
-
-      <div class="tool-card coming-soon">
-        <div class="tool-icon">
-          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round">
-            <line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/>
-          </svg>
-        </div>
-        <div class="tool-name">More coming</div>
-        <div class="tool-desc">More tools will be added here over time.</div>
-        <span class="tool-status soon">Soon</span>
-      </div>
-
+    <div class="row reveal">
+      <span class="row-idx">03</span>
+      <span>
+        <span class="row-title">Media Organiser</span>
+        <span class="row-stack meta">yap · Claude</span>
+      </span>
+      <span class="row-desc">Transcribes, renames and writes a PDF summary for every recording that lands in my Movies folder. Runs on a schedule.</span>
     </div>
 
-    <footer>
-      <span>© 2026 Raj Aaryaman Patra</span>
-      <div class="footer-links">
-        <a href="https://github.com/RajArPatra" target="_blank">GitHub</a>
-        <a href="https://www.linkedin.com/in/raj-aaryaman-p" target="_blank">LinkedIn</a>
+    <div class="row reveal">
+      <span class="row-idx">04</span>
+      <span>
+        <span class="row-title">Supply Chain Pipeline</span>
+        <span class="row-stack meta">SEC EDGAR · yfinance · D3.js</span>
+      </span>
+      <span class="row-desc">Pulls filings and financials for 50+ companies across any target's supply chain, FX-adjusts them, and renders the result as a graph.</span>
+    </div>
+
+    <div class="row reveal">
+      <span class="row-idx">05</span>
+      <span>
+        <span class="row-title">Telugu Lyrics Player</span>
+        <span class="row-stack meta">Flask · LRC</span>
+      </span>
+      <span class="row-desc">A small local web app that lines up a Telugu song with synced lyrics, romanisation and an English translation, three ways at once.</span>
+    </div>
+  </section>
+
+  <!-- ══ ABOUT ══ -->
+  <section class="section" id="about">
+    <div class="section-head reveal"><span class="hand">[ about ]</span></div>
+    <div class="about-body reveal">
+      <p>Most of what I build runs without me. Scrapers, summarisers and scheduled jobs that read a corner of the internet and publish a static page at the end of it.</p>
+      <p>The rest are small on-device tools I got tired of not having. Transcription that never leaves the machine, pipelines that turn filings into something you can actually look at.</p>
+    </div>
+  </section>
+
+  <!-- ══ SCROLL-FILL ══ -->
+  <div class="fill-block" id="fillBlock">
+    <div class="fill-line"><span class="fill-grey">Still building</span><span class="fill-ink" aria-hidden="true">Still building</span></div>
+    <div class="fill-line"><span class="fill-grey">the next thing</span><span class="fill-ink" aria-hidden="true">the next thing</span></div>
+  </div>
+
+</main>
+
+<footer>
+  <div class="footer-grid">
+    <div>
+      <p class="hand" style="font-size:20px;margin-bottom:14px">[ get in touch ]</p>
+      <a class="mail" href="mailto:rpatra1267@gmail.com">rpatra1267@gmail.com</a>
+      <div class="social">
+        <a href="https://github.com/RajArPatra" target="_blank" rel="noopener">GitHub</a>
+        <a href="https://www.linkedin.com/in/raj-aaryaman-p" target="_blank" rel="noopener">LinkedIn</a>
       </div>
-    </footer>
+    </div>
+    <a class="to-top" href="#top" aria-label="Back to top"><span aria-hidden="true">↑</span></a>
+  </div>
+  <div class="f-rule"></div>
+  <div class="f-base">
+    <span class="meta">© 2026 Raj Aaryaman Patra</span>
+    <span class="meta">All rights reserved</span>
+  </div>
+</footer>
 
-  </div><!-- /tools -->
+<script>
+(function(){
+  "use strict";
+  var reduce = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
 
-  <script>
-    function show(id, btn) {
-      document.querySelectorAll('.section').forEach(s => s.classList.remove('active'));
-      document.querySelectorAll('.nav-tab').forEach(b => b.classList.remove('active'));
-      document.getElementById(id).classList.add('active');
-      btn.classList.add('active');
-      window.scrollTo({ top: 0, behavior: 'smooth' });
+  /* 1. staggered scroll reveals */
+  var items = document.querySelectorAll('.reveal');
+  if('IntersectionObserver' in window && !reduce){
+    var io = new IntersectionObserver(function(entries){
+      entries.forEach(function(e,i){
+        if(!e.isIntersecting) return;
+        var el = e.target;
+        setTimeout(function(){ el.classList.add('in'); }, i*85);
+        io.unobserve(el);
+      });
+    },{threshold:.12, rootMargin:'0px 0px -6% 0px'});
+    items.forEach(function(el){ io.observe(el); });
+  } else {
+    items.forEach(function(el){ el.classList.add('in'); });
+  }
+
+  /* 2. hero parallax, 3. cascading scroll-fill, 4. nav auto-hide */
+  var heroName = document.getElementById('heroName'),
+      heroImg  = document.getElementById('heroImg'),
+      nav      = document.getElementById('nav'),
+      lines    = [].slice.call(document.querySelectorAll('.fill-line')),
+      lastY    = 0, ticking = false;
+
+  function frame(){
+    var y = window.pageYOffset, vh = window.innerHeight;
+
+    if(!reduce){
+      heroName.style.transform = 'translateY(' + (y * 0.34) + 'px)';
+      heroImg.style.transform  = 'translateY(' + (-y * 0.30) + 'px)';
     }
-  </script>
+
+    lines.forEach(function(line, i){
+      var ink = line.querySelector('.fill-ink');
+      if(!ink) return;
+      var top = line.getBoundingClientRect().top;
+      var p = (vh - top - (i * 70)) / (vh * 0.62);
+      ink.style.width = (Math.min(1, Math.max(0, p)) * 100) + '%';
+    });
+
+    nav.classList.toggle('solid', y > vh * 0.55);
+    nav.classList.toggle('hide', y > vh * 0.9 && y > lastY);
+    lastY = y;
+    ticking = false;
+  }
+
+  window.addEventListener('scroll', function(){
+    if(!ticking){ window.requestAnimationFrame(frame); ticking = true; }
+  }, {passive:true});
+  window.addEventListener('resize', frame, {passive:true});
+  frame();
+
+  /* 5. optional screenshot preview follows the cursor */
+  [].slice.call(document.querySelectorAll('.row[data-img]')).forEach(function(row){
+    var img = new Image();
+    img.className = 'row-img';
+    img.alt = '';
+    img.src = row.getAttribute('data-img');
+    row.appendChild(img);
+    row.addEventListener('mousemove', function(e){
+      if(reduce) return;
+      var r = row.getBoundingClientRect();
+      img.style.left = (e.clientX - r.left) + 'px';
+      img.style.top  = (e.clientY - r.top)  + 'px';
+    });
+  });
+})();
+</script>
 </body>
 </html>
