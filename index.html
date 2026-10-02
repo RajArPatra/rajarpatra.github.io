@@ -83,16 +83,20 @@ nav.solid::before{opacity:.94;backdrop-filter:blur(8px);-webkit-backdrop-filter:
   will-change:transform;
 }
 .hero picture{display:contents}
-.hero-img{
-  max-height:56svh;width:auto;
-  max-width:min(400px,58vw);margin-top:var(--hero-overlap);
+.hero-row{
+  display:grid;grid-template-columns:1fr 1fr;align-items:center;
+  gap:clamp(24px,5vw,72px);width:100%;max-width:1180px;
+  margin-top:var(--hero-overlap);
   position:relative;z-index:3;will-change:transform;
+}
+.hero-side{min-width:0}
+.hero-side-img{display:flex;justify-content:flex-end}
+.hero-side-cc{display:flex;flex-direction:column;gap:22px;align-items:flex-start}
+.hero-img{
+  max-height:52svh;width:auto;max-width:min(360px,42vw);
   filter:grayscale(.1);
 }
-.hero-note{
-  position:absolute;left:var(--gutter);bottom:11vh;
-  max-width:330px;color:var(--body);font-size:18px;z-index:10;
-}
+.hero-note{max-width:34ch;color:var(--body);font-size:17px}
 .scroll-cue{
   position:absolute;right:var(--gutter);bottom:11vh;z-index:10;
   display:flex;flex-direction:column;align-items:center;gap:10px;color:var(--body);
@@ -149,12 +153,11 @@ nav.solid::before{opacity:.94;backdrop-filter:blur(8px);-webkit-backdrop-filter:
 .about-body p+p{margin-top:24px}
 
 /* ─────────── CLAUDE CODE STRIP ─────────── */
-.cc-strip{display:grid;grid-template-columns:.4fr 1.9fr 1.1fr;gap:16px;
-  align-items:center;padding:20px var(--gutter);
-  border-top:1px solid var(--rule);border-bottom:1px solid var(--rule)}
+.cc-strip{display:flex;flex-direction:column;align-items:flex-start;gap:12px;
+  padding:0;border:0}
 .cc-label{font-size:19px;color:var(--ink)}
 .cc-cal-wrap{overflow-x:auto;max-width:100%;opacity:.9}
-.cc-stats{color:var(--body);font-size:13px;line-height:1.7;min-width:0}
+.cc-stats{color:var(--body);font-size:13px;line-height:1.7;min-width:0;max-width:34ch}
 
 /* ─────────── ACTIVITY HEATMAP ─────────── */
 
@@ -211,17 +214,14 @@ footer{padding:0 var(--gutter) 56px}
 @media(max-width:900px){
   :root{--hero-overlap:14px}
   .row{grid-template-columns:.4fr 1.6fr;row-gap:4px}
-  .cc-strip{grid-template-columns:.4fr 1.6fr;row-gap:12px}
-  .cc-stats{grid-column:2}
+  .hero-row{gap:clamp(18px,4vw,40px)}
+  .hero-img{max-width:min(300px,40vw)}
   .row-desc{grid-column:2;max-width:none;padding-top:12px}
   .row-arrow{top:26px}
 }
 @media(max-width:600px){
   :root{--gutter:18px;--hero-overlap:10px}
-  .cc-strip{grid-template-columns:1fr;gap:10px;padding:16px var(--gutter)}
-  /* the 900px rule still matches here; without this the stats sit in an
-     implicit second column and the single-column grid never applies */
-  .cc-stats{grid-column:auto;font-size:12px}
+  .cc-stats{font-size:12px}
   .cc-label{font-size:16px}
   .monogram{font-size:22px}
   .nav-link{font-size:15px}
@@ -230,6 +230,9 @@ footer{padding:0 var(--gutter) 56px}
   .hero-note,.scroll-cue{position:static;margin-top:34px;text-align:left;max-width:none}
   .scroll-cue{display:none}
   .hero{padding-top:110px;padding-bottom:60px;min-height:auto}
+  .hero-row{grid-template-columns:1fr;gap:28px;justify-items:start}
+  .hero-side-img{justify-content:center;width:100%}
+  .hero-img{max-width:min(300px,70vw);max-height:none}
   .hero-name{font-size:14vw;line-height:1.02;white-space:normal}
   .section-head{padding-top:12vh;flex-wrap:wrap;gap:8px}
   .section-head .count{margin-left:0;width:100%}
@@ -262,22 +265,29 @@ footer{padding:0 var(--gutter) 56px}
   <!-- ══ HERO ══ -->
   <section class="hero">
     <h1 class="hero-name" id="heroName">Raj Aaryaman Patra</h1>
-    <picture>
-      <source srcset="avatar-cut.webp" type="image/webp">
-      <img class="hero-img" id="heroImg" src="avatar-cut.png" alt="Illustrated portrait of Raj Aaryaman Patra" width="720" height="720" fetchpriority="high">
-    </picture>
-    <p class="hero-note">I build automated research pipelines. Things that read the internet on a schedule so I don't have to.</p>
+
+    <div class="hero-row" id="heroRow">
+      <div class="hero-side hero-side-img">
+        <picture>
+          <source srcset="avatar-cut.webp" type="image/webp">
+          <img class="hero-img" id="heroImg" src="avatar-cut.png" alt="Illustrated portrait of Raj Aaryaman Patra" width="720" height="720" fetchpriority="high">
+        </picture>
+      </div>
+
+      <div class="hero-side hero-side-cc">
+        <div class="cc-strip" id="activity" hidden>
+          <span class="hand cc-label">[ claude code ]</span>
+          <div class="cc-cal-wrap">
+            <div id="cal" class="cal" role="img" aria-label="Daily Claude Code session activity"></div>
+          </div>
+          <span class="cc-stats meta" id="ccStats"></span>
+        </div>
+        <p class="hero-note">I build automated research pipelines. Things that read the internet on a schedule so I don't have to.</p>
+      </div>
+    </div>
+
     <div class="scroll-cue"><span class="meta">Scroll</span><span class="cue-line"></span></div>
   </section>
-
-  <!-- ══ CLAUDE CODE STRIP ══ -->
-  <div class="cc-strip" id="activity" hidden>
-    <span class="hand cc-label">[ claude code ]</span>
-    <div class="cc-cal-wrap">
-      <div id="cal" class="cal" role="img" aria-label="Daily Claude Code session activity"></div>
-    </div>
-    <span class="cc-stats meta" id="ccStats"></span>
-  </div>
 
   <!-- ══ WORK ══ -->
   <section class="section" id="work">
@@ -430,7 +440,7 @@ footer{padding:0 var(--gutter) 56px}
 
   /* 2. hero parallax, 3. cascading scroll-fill, 4. nav auto-hide */
   var heroName = document.getElementById('heroName'),
-      heroImg  = document.getElementById('heroImg'),
+      heroRow  = document.getElementById('heroRow'),
       nav      = document.getElementById('nav'),
       lines    = [].slice.call(document.querySelectorAll('.fill-line')),
       lastY    = 0, ticking = false;
@@ -440,7 +450,7 @@ footer{padding:0 var(--gutter) 56px}
 
     if(!reduce){
       heroName.style.transform = 'translateY(' + (y * 0.34) + 'px)';
-      heroImg.style.transform  = 'translateY(' + (-y * 0.30) + 'px)';
+      heroRow.style.transform  = 'translateY(' + (-y * 0.30) + 'px)';
     }
 
     lines.forEach(function(line, i){
