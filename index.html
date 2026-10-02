@@ -148,35 +148,31 @@ nav.solid::before{opacity:.94;backdrop-filter:blur(8px);-webkit-backdrop-filter:
 .about-body{max-width:640px;font-size:clamp(20px,2.2vw,30px);line-height:1.35;font-variation-settings:"wght" 300}
 .about-body p+p{margin-top:24px}
 
-/* ─────────── CLAUDE CODE STATS ─────────── */
-.tiles{display:grid;grid-template-columns:repeat(auto-fit,minmax(150px,1fr));
-  column-gap:24px;row-gap:30px;border-top:1px solid var(--rule);padding-top:28px}
-.tile-k{display:block;color:var(--body);font-size:13px}
-.tile-v{display:block;margin-top:7px;font-size:clamp(26px,2.7vw,36px);
-  line-height:1.05;font-variation-settings:"wght" 400}
-.moby{margin-top:26px;color:var(--body);font-size:16px}
+/* ─────────── CLAUDE CODE STRIP ─────────── */
+.cc-strip{display:flex;align-items:center;gap:24px;flex-wrap:wrap;
+  padding:16px var(--gutter);border-top:1px solid var(--rule);
+  border-bottom:1px solid var(--rule);opacity:.82;transition:opacity .4s}
+.cc-strip:hover{opacity:1}
+.cc-label{font-size:17px;flex:0 0 auto;color:var(--body)}
+.cc-cal-wrap{flex:0 0 auto;overflow-x:auto;max-width:100%}
+.cc-stats{flex:1 1 220px;color:var(--body);font-size:13px;line-height:1.7;
+  text-align:right;min-width:0}
 
 /* ─────────── ACTIVITY HEATMAP ─────────── */
-.activity{margin-top:54px;max-width:760px}
-.activity-head{display:flex;align-items:baseline;gap:12px;flex-wrap:wrap;margin-bottom:18px}
-.activity-title{font-size:17px;font-variation-settings:"wght" 500}
-.activity-sub{font-size:14px;color:var(--body)}
-.activity-scroll{overflow-x:auto;padding-bottom:6px;-webkit-overflow-scrolling:touch}
-.cal{display:flex;gap:3px;min-width:min-content}
-.cal{padding-top:18px}
-.cal-week{display:flex;flex-direction:column;gap:3px;position:relative}
-.cal-month{position:absolute;top:-17px;left:0;font-family:'Bebas Neue',sans-serif;
-  font-size:12px;color:var(--body);letter-spacing:.04em;white-space:nowrap;pointer-events:none}
-.cal-day{width:11px;height:11px;border-radius:2px;background:var(--lv0);flex:0 0 auto}
+
+.cal{display:flex;gap:2px;min-width:min-content}
+.cal{padding-top:0}
+.cal-week{display:flex;flex-direction:column;gap:2px;position:relative}
+.cal-day{width:7px;height:7px;border-radius:1.5px;background:var(--lv0);flex:0 0 auto}
 .cal-day[data-lv="1"]{background:var(--lv1)}
 .cal-day[data-lv="2"]{background:var(--lv2)}
 .cal-day[data-lv="3"]{background:var(--lv3)}
 .cal-day[data-lv="4"]{background:var(--lv4)}
-.cal-day[data-out]{background:none}
-.cal-legend{display:flex;align-items:center;gap:6px;margin-top:14px;
-  font-size:13px;color:var(--body)}
-.cal-legend .cal-day{width:10px;height:10px}
-@media(max-width:600px){ .cal-day{width:9px;height:9px} }
+@media(max-width:600px){
+  .cc-strip{gap:14px;padding:14px var(--gutter)}
+  .cc-stats{text-align:left;flex-basis:100%;font-size:12px}
+  .cc-label{font-size:15px}
+}
 
 /* ─────────── SCROLL-FILL FOOTER ─────────── */
 .fill-block{padding:16vh var(--gutter) 0}
@@ -274,6 +270,15 @@ footer{padding:0 var(--gutter) 56px}
     <div class="scroll-cue"><span class="meta">Scroll</span><span class="cue-line"></span></div>
   </section>
 
+  <!-- ══ CLAUDE CODE STRIP ══ -->
+  <div class="cc-strip" id="activity" hidden>
+    <span class="hand cc-label">[ claude code ]</span>
+    <div class="cc-cal-wrap">
+      <div id="cal" class="cal" role="img" aria-label="Daily Claude Code session activity"></div>
+    </div>
+    <span class="cc-stats meta" id="ccStats"></span>
+  </div>
+
   <!-- ══ WORK ══ -->
   <section class="section" id="work">
     <div class="section-head reveal">
@@ -362,37 +367,6 @@ footer{padding:0 var(--gutter) 56px}
         <span class="row-stack meta">Flask · LRC</span>
       </span>
       <span class="row-desc">A small local web app that lines up a Telugu song with synced lyrics, romanisation and an English translation, three ways at once.</span>
-    </div>
-  </section>
-
-  <!-- ══ CLAUDE CODE ══ -->
-  <section class="section" id="activity" hidden>
-    <div class="section-head reveal">
-      <span class="hand">[ claude code ]</span>
-      <span class="meta count" id="activitySub"></span>
-    </div>
-
-    <div class="tiles reveal">
-      <div class="tile"><span class="tile-k meta">Sessions</span><span class="tile-v" id="tSessions">&nbsp;</span></div>
-      <div class="tile"><span class="tile-k meta">Messages</span><span class="tile-v" id="tMessages">&nbsp;</span></div>
-      <div class="tile"><span class="tile-k meta">Total tokens</span><span class="tile-v" id="tTokens">&nbsp;</span></div>
-      <div class="tile"><span class="tile-k meta">Active days</span><span class="tile-v" id="tDays">&nbsp;</span></div>
-      <div class="tile"><span class="tile-k meta">Peak hour</span><span class="tile-v" id="tPeak">&nbsp;</span></div>
-      <div class="tile"><span class="tile-k meta">Favourite model</span><span class="tile-v" id="tModel">&nbsp;</span></div>
-    </div>
-
-    <div class="activity reveal">
-      <div class="activity-scroll">
-        <div id="cal" class="cal" role="img" aria-label="Daily Claude Code session activity"></div>
-      </div>
-      <div class="cal-legend">
-        <span>Less</span>
-        <span class="cal-day"></span><span class="cal-day" data-lv="1"></span>
-        <span class="cal-day" data-lv="2"></span><span class="cal-day" data-lv="3"></span>
-        <span class="cal-day" data-lv="4"></span>
-        <span>More</span>
-      </div>
-      <p class="moby" id="moby"></p>
     </div>
   </section>
 
@@ -510,20 +484,13 @@ footer{padding:0 var(--gutter) 56px}
       {month:'short', day:'numeric', year:'numeric'}); };
 
     var cal=document.getElementById('cal');
-    var cur=new Date(start), week=null, lastMonth=-1;
+    var cur=new Date(start), week=null;
 
     while(cur<=end){
       if(cur.getDay()===0 || !week){
         week=document.createElement('div'); week.className='cal-week';
         cal.appendChild(week);
         // label the first column that lands in a new month
-        if(cur.getMonth()!==lastMonth){
-          lastMonth=cur.getMonth();
-          var lab=document.createElement('span');
-          lab.className='cal-month';
-          lab.textContent=cur.toLocaleDateString(undefined,{month:'short'});
-          week.appendChild(lab);
-        }
       }
       var k=iso(cur), rec=days[k], prompts=rec?rec[1]:0, sess=rec?rec[0]:0;
       var cell=document.createElement('span');
@@ -536,26 +503,21 @@ footer{padding:0 var(--gutter) 56px}
       cur.setDate(cur.getDate()+1);
     }
 
-    var first=new Date(keys[0]+'T00:00:00');
-    var set=function(id,v){ var el=document.getElementById(id); if(el) el.textContent=v; };
     var compact=function(n){
-      if(n>=1e6) return (Math.floor(n/1e5)/10).toFixed(1)+'M';  // floor, as the CC dashboard does
+      if(n>=1e6) return (Math.floor(n/1e5)/10).toFixed(1)+'M';
       if(n>=1e3) return n.toLocaleString();
       return String(n);
     };
     var hour12=function(h){ return (h%12||12)+' '+(h<12?'AM':'PM'); };
 
-    set('tSessions', t.sessions);
-    set('tMessages', (t.messages||0).toLocaleString());
-    set('tTokens',   compact(t.tokens||0));
-    set('tDays',     t.active_days);
-    set('tPeak',     hour12(t.peak_hour||0));
-    set('tModel',    t.model||'n/a');
-    set('activitySub', 'Since '+first.toLocaleDateString(undefined,{month:'long', year:'numeric'}));
-    if(t.moby_dicks)
-      set('moby', "That's roughly "+t.moby_dicks+" times the text of Moby-Dick.");
+    var bits=[t.sessions+' sessions', (t.messages||0).toLocaleString()+' messages',
+              compact(t.tokens||0)+' tokens', 'peak '+hour12(t.peak_hour||0), t.model||''];
+    var stats=document.getElementById('ccStats');
+    if(stats) stats.textContent = bits.filter(Boolean).join('  \u00b7  ');
 
-    document.getElementById('activity').hidden=false;
+    var strip=document.getElementById('activity');
+    if(t.moby_dicks) strip.title = "Roughly "+t.moby_dicks+" times the text of Moby-Dick.";
+    strip.hidden=false;
   }).catch(function(e){ console.warn('activity heatmap skipped:', e.message); });
 
   /* 5. optional screenshot preview follows the cursor */
