@@ -71,7 +71,7 @@ nav.solid::before{opacity:.94;backdrop-filter:blur(8px);-webkit-backdrop-filter:
 
 /* ─────────── HERO ─────────── */
 .hero{
-  min-height:100svh;display:flex;flex-direction:column;
+  min-height:88svh;display:flex;flex-direction:column;
   justify-content:center;align-items:center;
   position:relative;padding:96px var(--gutter) 0;
 }
@@ -98,7 +98,7 @@ nav.solid::before{opacity:.94;backdrop-filter:blur(8px);-webkit-backdrop-filter:
 }
 .hero-note{max-width:34ch;color:var(--body);font-size:17px}
 .scroll-cue{
-  position:absolute;right:var(--gutter);bottom:11vh;z-index:10;
+  position:absolute;right:var(--gutter);bottom:6vh;z-index:10;
   display:flex;flex-direction:column;align-items:center;gap:10px;color:var(--body);
 }
 .cue-line{width:1px;height:46px;background:var(--rule);transform-origin:top;animation:cue 2.4s var(--ease) infinite}
@@ -108,8 +108,10 @@ nav.solid::before{opacity:.94;backdrop-filter:blur(8px);-webkit-backdrop-filter:
 .section{padding:0 var(--gutter);scroll-margin-top:90px}
 .section-head{
   display:flex;align-items:baseline;gap:16px;
-  margin-bottom:46px;padding-top:16vh;
+  margin-bottom:40px;padding-top:clamp(56px,9vh,110px);
 }
+/* the hero already supplies breathing room above the first one */
+#work .section-head{padding-top:clamp(28px,4.5vh,60px)}
 .section-head .hand{font-size:22px}
 .section-head .count{margin-left:auto;color:var(--mid)}
 
@@ -234,7 +236,7 @@ footer{padding:0 var(--gutter) 56px}
   .hero-side-img{justify-content:center;width:100%}
   .hero-img{max-width:min(300px,70vw);max-height:none}
   .hero-name{font-size:14vw;line-height:1.02;white-space:normal}
-  .section-head{padding-top:12vh;flex-wrap:wrap;gap:8px}
+  .section-head{padding-top:clamp(44px,7vh,70px);flex-wrap:wrap;gap:8px}
   .section-head .count{margin-left:0;width:100%}
   .row{grid-template-columns:1fr;padding:20px 0 24px}
   .row-idx{padding-top:0}
