@@ -28,6 +28,7 @@
   --rule:#757575;
   --gutter:30px;
   --hero-overlap:18px;    /* rest gap under the name; scroll closes it */
+  --lv0:#D3D2CF; --lv1:#B0AFAB; --lv2:#85847F; --lv3:#4D4C49; --lv4:#121010;
   --ease:cubic-bezier(.22,.8,.3,1);
   --overshoot:cubic-bezier(.175,.885,.32,1.275);
 }
@@ -146,6 +147,28 @@ nav.solid::before{opacity:.94;backdrop-filter:blur(8px);-webkit-backdrop-filter:
 /* ─────────── ABOUT ─────────── */
 .about-body{max-width:640px;font-size:clamp(20px,2.2vw,30px);line-height:1.35;font-variation-settings:"wght" 300}
 .about-body p+p{margin-top:24px}
+
+/* ─────────── ACTIVITY HEATMAP ─────────── */
+.activity{margin-top:52px;max-width:760px}
+.activity-head{display:flex;align-items:baseline;gap:12px;flex-wrap:wrap;margin-bottom:18px}
+.activity-title{font-size:17px;font-variation-settings:"wght" 500}
+.activity-sub{font-size:14px;color:var(--body)}
+.activity-scroll{overflow-x:auto;padding-bottom:6px;-webkit-overflow-scrolling:touch}
+.cal{display:flex;gap:3px;min-width:min-content}
+.cal{padding-top:18px}
+.cal-week{display:flex;flex-direction:column;gap:3px;position:relative}
+.cal-month{position:absolute;top:-17px;left:0;font-family:'Bebas Neue',sans-serif;
+  font-size:12px;color:var(--body);letter-spacing:.04em;white-space:nowrap;pointer-events:none}
+.cal-day{width:11px;height:11px;border-radius:2px;background:var(--lv0);flex:0 0 auto}
+.cal-day[data-lv="1"]{background:var(--lv1)}
+.cal-day[data-lv="2"]{background:var(--lv2)}
+.cal-day[data-lv="3"]{background:var(--lv3)}
+.cal-day[data-lv="4"]{background:var(--lv4)}
+.cal-day[data-out]{background:none}
+.cal-legend{display:flex;align-items:center;gap:6px;margin-top:14px;
+  font-size:13px;color:var(--body)}
+.cal-legend .cal-day{width:10px;height:10px}
+@media(max-width:600px){ .cal-day{width:9px;height:9px} }
 
 /* ─────────── SCROLL-FILL FOOTER ─────────── */
 .fill-block{padding:16vh var(--gutter) 0}
@@ -341,6 +364,23 @@ footer{padding:0 var(--gutter) 56px}
       <p>Most of what I build runs without me. Scrapers, summarisers and scheduled jobs that read a corner of the internet and publish a static page at the end of it.</p>
       <p>The rest are small on-device tools I got tired of not having. Transcription that never leaves the machine, pipelines that turn filings into something you can actually look at.</p>
     </div>
+
+    <div class="activity reveal" id="activity" hidden>
+      <div class="activity-head">
+        <span class="activity-title">Claude Code activity</span>
+        <span class="activity-sub" id="activitySub"></span>
+      </div>
+      <div class="activity-scroll">
+        <div id="cal" class="cal" role="img" aria-label="Daily Claude Code session activity"></div>
+      </div>
+      <div class="cal-legend">
+        <span>Less</span>
+        <span class="cal-day"></span><span class="cal-day" data-lv="1"></span>
+        <span class="cal-day" data-lv="2"></span><span class="cal-day" data-lv="3"></span>
+        <span class="cal-day" data-lv="4"></span>
+        <span>More</span>
+      </div>
+    </div>
   </section>
 
   <!-- ══ SCROLL-FILL ══ -->
@@ -425,6 +465,60 @@ footer{padding:0 var(--gutter) 56px}
   }, {passive:true});
   window.addEventListener('resize', frame, {passive:true});
   frame();
+
+  /* 6. Claude Code activity heatmap (counts only, from activity.json) */
+  fetch('activity.json', {cache:'no-cache'}).then(function(r){
+    if(!r.ok) throw new Error(r.status); return r.json();
+  }).then(function(data){
+    var days = data.days || {}, t = data.totals || {};
+    var keys = Object.keys(days).sort();
+    if(!keys.length) return;
+
+    var iso = function(d){ return d.getFullYear()+'-'+
+      String(d.getMonth()+1).padStart(2,'0')+'-'+String(d.getDate()).padStart(2,'0'); };
+
+    // start on the Sunday on or before the first active day; end today
+    var start = new Date(keys[0]+'T00:00:00');
+    start.setDate(start.getDate() - start.getDay());
+    var end = new Date(); end.setHours(0,0,0,0);
+
+    var lv = function(p){ return p===0?0 : p<10?1 : p<30?2 : p<80?3 : 4; };
+    var fmt = function(d){ return d.toLocaleDateString(undefined,
+      {month:'short', day:'numeric', year:'numeric'}); };
+
+    var cal=document.getElementById('cal');
+    var cur=new Date(start), week=null, lastMonth=-1;
+
+    while(cur<=end){
+      if(cur.getDay()===0 || !week){
+        week=document.createElement('div'); week.className='cal-week';
+        cal.appendChild(week);
+        // label the first column that lands in a new month
+        if(cur.getMonth()!==lastMonth){
+          lastMonth=cur.getMonth();
+          var lab=document.createElement('span');
+          lab.className='cal-month';
+          lab.textContent=cur.toLocaleDateString(undefined,{month:'short'});
+          week.appendChild(lab);
+        }
+      }
+      var k=iso(cur), rec=days[k], prompts=rec?rec[1]:0, sess=rec?rec[0]:0;
+      var cell=document.createElement('span');
+      cell.className='cal-day';
+      cell.setAttribute('data-lv', lv(prompts));
+      cell.title = prompts
+        ? fmt(cur)+': '+sess+(sess===1?' session':' sessions')+', '+prompts+(prompts===1?' prompt':' prompts')
+        : fmt(cur)+': no activity';
+      week.appendChild(cell);
+      cur.setDate(cur.getDate()+1);
+    }
+
+    var first=new Date(keys[0]+'T00:00:00');
+    document.getElementById('activitySub').textContent =
+      t.sessions+' sessions over '+t.active_days+' days since '+
+      first.toLocaleDateString(undefined,{month:'long', year:'numeric'});
+    document.getElementById('activity').hidden=false;
+  }).catch(function(e){ console.warn('activity heatmap skipped:', e.message); });
 
   /* 5. optional screenshot preview follows the cursor */
   [].slice.call(document.querySelectorAll('.row[data-img]')).forEach(function(row){
