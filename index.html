@@ -148,8 +148,16 @@ nav.solid::before{opacity:.94;backdrop-filter:blur(8px);-webkit-backdrop-filter:
 .about-body{max-width:640px;font-size:clamp(20px,2.2vw,30px);line-height:1.35;font-variation-settings:"wght" 300}
 .about-body p+p{margin-top:24px}
 
+/* ─────────── CLAUDE CODE STATS ─────────── */
+.tiles{display:grid;grid-template-columns:repeat(auto-fit,minmax(150px,1fr));
+  column-gap:24px;row-gap:30px;border-top:1px solid var(--rule);padding-top:28px}
+.tile-k{display:block;color:var(--body);font-size:13px}
+.tile-v{display:block;margin-top:7px;font-size:clamp(26px,2.7vw,36px);
+  line-height:1.05;font-variation-settings:"wght" 400}
+.moby{margin-top:26px;color:var(--body);font-size:16px}
+
 /* ─────────── ACTIVITY HEATMAP ─────────── */
-.activity{margin-top:52px;max-width:760px}
+.activity{margin-top:54px;max-width:760px}
 .activity-head{display:flex;align-items:baseline;gap:12px;flex-wrap:wrap;margin-bottom:18px}
 .activity-title{font-size:17px;font-variation-settings:"wght" 500}
 .activity-sub{font-size:14px;color:var(--body)}
@@ -357,19 +365,23 @@ footer{padding:0 var(--gutter) 56px}
     </div>
   </section>
 
-  <!-- ══ ABOUT ══ -->
-  <section class="section" id="about">
-    <div class="section-head reveal"><span class="hand">[ about ]</span></div>
-    <div class="about-body reveal">
-      <p>Most of what I build runs without me. Scrapers, summarisers and scheduled jobs that read a corner of the internet and publish a static page at the end of it.</p>
-      <p>The rest are small on-device tools I got tired of not having. Transcription that never leaves the machine, pipelines that turn filings into something you can actually look at.</p>
+  <!-- ══ CLAUDE CODE ══ -->
+  <section class="section" id="activity" hidden>
+    <div class="section-head reveal">
+      <span class="hand">[ claude code ]</span>
+      <span class="meta count" id="activitySub"></span>
     </div>
 
-    <div class="activity reveal" id="activity" hidden>
-      <div class="activity-head">
-        <span class="activity-title">Claude Code activity</span>
-        <span class="activity-sub" id="activitySub"></span>
-      </div>
+    <div class="tiles reveal">
+      <div class="tile"><span class="tile-k meta">Sessions</span><span class="tile-v" id="tSessions">&nbsp;</span></div>
+      <div class="tile"><span class="tile-k meta">Messages</span><span class="tile-v" id="tMessages">&nbsp;</span></div>
+      <div class="tile"><span class="tile-k meta">Total tokens</span><span class="tile-v" id="tTokens">&nbsp;</span></div>
+      <div class="tile"><span class="tile-k meta">Active days</span><span class="tile-v" id="tDays">&nbsp;</span></div>
+      <div class="tile"><span class="tile-k meta">Peak hour</span><span class="tile-v" id="tPeak">&nbsp;</span></div>
+      <div class="tile"><span class="tile-k meta">Favourite model</span><span class="tile-v" id="tModel">&nbsp;</span></div>
+    </div>
+
+    <div class="activity reveal">
       <div class="activity-scroll">
         <div id="cal" class="cal" role="img" aria-label="Daily Claude Code session activity"></div>
       </div>
@@ -380,7 +392,18 @@ footer{padding:0 var(--gutter) 56px}
         <span class="cal-day" data-lv="4"></span>
         <span>More</span>
       </div>
+      <p class="moby" id="moby"></p>
     </div>
+  </section>
+
+  <!-- ══ ABOUT ══ -->
+  <section class="section" id="about">
+    <div class="section-head reveal"><span class="hand">[ about ]</span></div>
+    <div class="about-body reveal">
+      <p>Most of what I build runs without me. Scrapers, summarisers and scheduled jobs that read a corner of the internet and publish a static page at the end of it.</p>
+      <p>The rest are small on-device tools I got tired of not having. Transcription that never leaves the machine, pipelines that turn filings into something you can actually look at.</p>
+    </div>
+
   </section>
 
   <!-- ══ SCROLL-FILL ══ -->
@@ -514,9 +537,24 @@ footer{padding:0 var(--gutter) 56px}
     }
 
     var first=new Date(keys[0]+'T00:00:00');
-    document.getElementById('activitySub').textContent =
-      t.sessions+' sessions over '+t.active_days+' days since '+
-      first.toLocaleDateString(undefined,{month:'long', year:'numeric'});
+    var set=function(id,v){ var el=document.getElementById(id); if(el) el.textContent=v; };
+    var compact=function(n){
+      if(n>=1e6) return (Math.floor(n/1e5)/10).toFixed(1)+'M';  // floor, as the CC dashboard does
+      if(n>=1e3) return n.toLocaleString();
+      return String(n);
+    };
+    var hour12=function(h){ return (h%12||12)+' '+(h<12?'AM':'PM'); };
+
+    set('tSessions', t.sessions);
+    set('tMessages', (t.messages||0).toLocaleString());
+    set('tTokens',   compact(t.tokens||0));
+    set('tDays',     t.active_days);
+    set('tPeak',     hour12(t.peak_hour||0));
+    set('tModel',    t.model||'n/a');
+    set('activitySub', 'Since '+first.toLocaleDateString(undefined,{month:'long', year:'numeric'}));
+    if(t.moby_dicks)
+      set('moby', "That's roughly "+t.moby_dicks+" times the text of Moby-Dick.");
+
     document.getElementById('activity').hidden=false;
   }).catch(function(e){ console.warn('activity heatmap skipped:', e.message); });
 
