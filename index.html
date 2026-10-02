@@ -149,14 +149,12 @@ nav.solid::before{opacity:.94;backdrop-filter:blur(8px);-webkit-backdrop-filter:
 .about-body p+p{margin-top:24px}
 
 /* ─────────── CLAUDE CODE STRIP ─────────── */
-.cc-strip{display:flex;align-items:center;gap:24px;flex-wrap:wrap;
-  padding:16px var(--gutter);border-top:1px solid var(--rule);
-  border-bottom:1px solid var(--rule);opacity:.82;transition:opacity .4s}
-.cc-strip:hover{opacity:1}
-.cc-label{font-size:17px;flex:0 0 auto;color:var(--body)}
-.cc-cal-wrap{flex:0 0 auto;overflow-x:auto;max-width:100%}
-.cc-stats{flex:1 1 220px;color:var(--body);font-size:13px;line-height:1.7;
-  text-align:right;min-width:0}
+.cc-strip{display:grid;grid-template-columns:.4fr 1.9fr 1.1fr;gap:16px;
+  align-items:center;padding:20px var(--gutter);
+  border-top:1px solid var(--rule);border-bottom:1px solid var(--rule)}
+.cc-label{font-size:19px;color:var(--ink)}
+.cc-cal-wrap{overflow-x:auto;max-width:100%;opacity:.9}
+.cc-stats{color:var(--body);font-size:13px;line-height:1.7;min-width:0}
 
 /* ─────────── ACTIVITY HEATMAP ─────────── */
 
@@ -168,11 +166,6 @@ nav.solid::before{opacity:.94;backdrop-filter:blur(8px);-webkit-backdrop-filter:
 .cal-day[data-lv="2"]{background:var(--lv2)}
 .cal-day[data-lv="3"]{background:var(--lv3)}
 .cal-day[data-lv="4"]{background:var(--lv4)}
-@media(max-width:600px){
-  .cc-strip{gap:14px;padding:14px var(--gutter)}
-  .cc-stats{text-align:left;flex-basis:100%;font-size:12px}
-  .cc-label{font-size:15px}
-}
 
 /* ─────────── SCROLL-FILL FOOTER ─────────── */
 .fill-block{padding:16vh var(--gutter) 0}
@@ -218,11 +211,18 @@ footer{padding:0 var(--gutter) 56px}
 @media(max-width:900px){
   :root{--hero-overlap:14px}
   .row{grid-template-columns:.4fr 1.6fr;row-gap:4px}
+  .cc-strip{grid-template-columns:.4fr 1.6fr;row-gap:12px}
+  .cc-stats{grid-column:2}
   .row-desc{grid-column:2;max-width:none;padding-top:12px}
   .row-arrow{top:26px}
 }
 @media(max-width:600px){
   :root{--gutter:18px;--hero-overlap:10px}
+  .cc-strip{grid-template-columns:1fr;gap:10px;padding:16px var(--gutter)}
+  /* the 900px rule still matches here; without this the stats sit in an
+     implicit second column and the single-column grid never applies */
+  .cc-stats{grid-column:auto;font-size:12px}
+  .cc-label{font-size:16px}
   .monogram{font-size:22px}
   .nav-link{font-size:15px}
   .nav-links{gap:16px}
