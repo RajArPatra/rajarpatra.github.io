@@ -104,6 +104,24 @@ nav.solid::before{opacity:.94;backdrop-filter:blur(8px);-webkit-backdrop-filter:
 .cue-line{width:1px;height:46px;background:var(--rule);transform-origin:top;animation:cue 2.4s var(--ease) infinite}
 @keyframes cue{0%{transform:scaleY(0)}45%{transform:scaleY(1)}100%{transform:scaleY(0);transform-origin:bottom}}
 
+/* ─────────── CONNECT ─────────── */
+.connect{display:flex;flex-direction:column;gap:12px;align-items:flex-start}
+.connect-label{font-size:17px;color:var(--body)}
+.connect-links{display:flex;gap:28px;flex-wrap:wrap}
+.connect-link{
+  display:inline-flex;align-items:baseline;gap:5px;
+  font-size:clamp(22px,2.4vw,30px);line-height:1.05;text-decoration:none;color:var(--ink);
+  font-variation-settings:"wght" 450;
+  border-bottom:1px solid var(--rule);padding-bottom:3px;
+  transition:font-variation-settings .4s var(--ease), border-color .325s;
+}
+.connect-link:hover,.connect-link:focus-visible{
+  font-variation-settings:"wght" 700;border-bottom-color:var(--ink);
+}
+.connect-arrow{font-size:.62em;transition:transform .35s var(--ease)}
+.connect-link:hover .connect-arrow{transform:translate(2px,-2px)}
+.nav-sep{width:1px;height:14px;background:var(--rule);align-self:center}
+
 /* ─────────── SECTIONS ─────────── */
 .section{padding:0 var(--gutter);scroll-margin-top:90px}
 .section-head{
@@ -216,6 +234,7 @@ footer{padding:0 var(--gutter) 56px}
 @media(max-width:900px){
   :root{--hero-overlap:14px}
   .row{grid-template-columns:.4fr 1.6fr;row-gap:4px}
+  .nav-links{gap:18px}
   .hero-row{gap:clamp(18px,4vw,40px)}
   .hero-img{max-width:min(300px,40vw)}
   .row-desc{grid-column:2;max-width:none;padding-top:12px}
@@ -228,6 +247,8 @@ footer{padding:0 var(--gutter) 56px}
   .monogram{font-size:22px}
   .nav-link{font-size:15px}
   .nav-links{gap:16px}
+  .nav-ext,.nav-sep{display:none}
+  .connect-links{gap:22px}
   nav{padding:16px var(--gutter)}
   .hero-note,.scroll-cue{position:static;margin-top:34px;text-align:left;max-width:none}
   .scroll-cue{display:none}
@@ -259,6 +280,9 @@ footer{padding:0 var(--gutter) 56px}
     <a class="nav-link" href="#work">Work</a>
     <a class="nav-link" href="#tools">Tools</a>
     <a class="nav-link" href="#about">About</a>
+    <span class="nav-sep" aria-hidden="true"></span>
+    <a class="nav-link nav-ext" href="https://github.com/RajArPatra" target="_blank" rel="noopener">GitHub</a>
+    <a class="nav-link nav-ext" href="https://www.linkedin.com/in/raj-aaryaman-p" target="_blank" rel="noopener">LinkedIn</a>
   </div>
 </nav>
 
@@ -285,6 +309,18 @@ footer{padding:0 var(--gutter) 56px}
           <span class="cc-stats meta" id="ccStats"></span>
         </div>
         <p class="hero-note">I build automated research pipelines. Things that read the internet on a schedule so I don't have to.</p>
+
+        <div class="connect">
+          <span class="hand connect-label">[ find me ]</span>
+          <div class="connect-links">
+            <a class="connect-link" href="https://github.com/RajArPatra" target="_blank" rel="noopener">
+              GitHub<span class="connect-arrow" aria-hidden="true">↗</span>
+            </a>
+            <a class="connect-link" href="https://www.linkedin.com/in/raj-aaryaman-p" target="_blank" rel="noopener">
+              LinkedIn<span class="connect-arrow" aria-hidden="true">↗</span>
+            </a>
+          </div>
+        </div>
       </div>
     </div>
 
