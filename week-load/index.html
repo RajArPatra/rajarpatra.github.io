@@ -1,0 +1,327 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Week Load — Raj Aaryaman Patra</title>
+<meta name="description" content="How full each week of the term is, drawn from my calendar. Hours and counts only, no event details.">
+<link rel="icon" type="image/png" sizes="32x32" href="../favicon.png">
+<link rel="apple-touch-icon" sizes="180x180" href="../apple-touch-icon.png">
+<meta property="og:title" content="Week Load">
+<meta property="og:description" content="How full each week of the term is, drawn from my calendar. Hours and counts only, no event details.">
+<meta property="og:image" content="https://rajarpatra.github.io/apple-touch-icon.png">
+<meta property="og:url" content="https://rajarpatra.github.io/week-load/">
+<meta property="og:type" content="article">
+<meta name="theme-color" content="#F4EFE4">
+
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=Montserrat:wght@100..900&family=Nothing+You+Could+Do&display=swap" rel="stylesheet">
+
+<style>
+/* ─────────── TOKENS (shared with index.html) ─────────── */
+:root{
+  --bg:#F4EFE4;
+  --ink:#1B1611;
+  --mid:#8C7E66;
+  --body:#6E6355;
+  --rule:#CFC4B0;
+  --gutter:30px;
+  --lv0:#E4DCCB; --lv1:#CFC2A9; --lv2:#A89779; --lv3:#6E6355; --lv4:#1B1611;
+  --clash:#B04A2F;              /* burnt sienna: the one alert note in the palette */
+  --ease:cubic-bezier(.22,.8,.3,1);
+  --overshoot:cubic-bezier(.175,.885,.32,1.275);
+}
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+html{scroll-behavior:smooth}
+body{
+  background:var(--bg);color:var(--ink);
+  font-family:Montserrat,sans-serif;font-size:18px;line-height:1.3;
+  font-variation-settings:"wght" 400;
+  -webkit-font-smoothing:antialiased;overflow-x:hidden;
+}
+a{color:inherit}
+:focus-visible{outline:2px solid var(--ink);outline-offset:4px}
+.hand{font-family:'Nothing You Could Do',cursive;font-weight:400}
+.meta{font-family:'Bebas Neue',sans-serif;font-size:15px;letter-spacing:.04em}
+.skip{position:absolute;left:-9999px;top:0;background:var(--ink);color:var(--bg);padding:10px 16px;z-index:100}
+.skip:focus{left:var(--gutter);top:12px}
+
+/* ─────────── NAV ─────────── */
+nav{
+  position:fixed;top:0;left:0;right:0;z-index:60;
+  display:flex;justify-content:space-between;align-items:center;
+  padding:22px var(--gutter);gap:20px;
+}
+nav::before{content:"";position:absolute;inset:0;background:var(--bg);
+  opacity:.94;backdrop-filter:blur(8px);-webkit-backdrop-filter:blur(8px);z-index:-1}
+.monogram{font-family:'Nothing You Could Do',cursive;font-size:26px;text-decoration:none;line-height:1}
+.nav-links{display:flex;gap:26px;flex-shrink:0}
+.nav-link{
+  text-decoration:none;font-size:17px;
+  font-variation-settings:"wght" 500;
+  transition:font-variation-settings .4s var(--overshoot), color .325s;
+}
+.nav-link:hover,.nav-link:focus-visible{font-variation-settings:"wght" 800;color:#000}
+.nav-sep{width:1px;height:14px;background:var(--rule);align-self:center}
+
+/* ─────────── PAGE HEAD ─────────── */
+main{padding:0 var(--gutter)}
+.page-head{padding-top:clamp(110px,18vh,190px);max-width:1180px;margin:0 auto}
+.back{display:inline-block;text-decoration:none;color:var(--mid);margin-bottom:22px;
+  transition:color .325s}
+.back:hover{color:var(--ink)}
+.page-title{font-size:clamp(34px,6.2vw,80px);line-height:1;text-transform:uppercase;
+  font-variation-settings:"wght" 400;text-wrap:balance}
+.page-sub{margin-top:20px;max-width:46ch;color:var(--body);font-size:17px;line-height:1.45}
+.head-rule{display:flex;align-items:baseline;gap:16px;margin:46px 0 30px;
+  padding-bottom:12px;border-bottom:1px solid var(--rule);max-width:1180px}
+.head-rule .hand{font-size:22px}
+.head-rule .count{margin-left:auto;color:var(--mid)}
+
+/* ─────────── WEEK GRID ─────────── */
+.spine{max-width:1180px;margin:0 auto;overflow-x:auto}
+.srow{display:grid;gap:4px;align-items:center;
+  grid-template-columns:4rem repeat(7,30px) 2rem minmax(4rem,1fr) 3.6rem}
+.dowrow{margin-bottom:8px}
+.dow{font-family:'Bebas Neue',sans-serif;font-size:14px;letter-spacing:.04em;
+  color:var(--mid);text-align:center}
+.wklabel{font-family:'Bebas Neue',sans-serif;font-size:15px;letter-spacing:.04em;
+  color:var(--mid);white-space:nowrap}
+.srow.now .wklabel,.srow.now .whrs{color:var(--ink)}
+.srow.now{position:relative}
+.srow.now::before{content:"";position:absolute;left:-12px;top:2px;bottom:2px;width:2px;
+  background:var(--ink)}
+.cell{
+  position:relative;width:100%;aspect-ratio:1;border:0;padding:0;border-radius:2px;
+  background:var(--lv0);cursor:default;
+  font-family:'Bebas Neue',sans-serif;font-size:12px;letter-spacing:.03em;color:var(--mid);
+  display:flex;align-items:center;justify-content:center;
+  transition:transform .3s var(--ease);
+}
+.cell[data-lv="1"]{background:var(--lv1);color:var(--ink)}
+.cell[data-lv="2"]{background:var(--lv2);color:var(--ink)}
+.cell[data-lv="3"]{background:var(--lv3);color:var(--bg)}
+.cell[data-lv="4"]{background:var(--lv4);color:var(--bg)}
+.cell.out{background:transparent;color:transparent}
+.cell.today{box-shadow:0 0 0 2px var(--bg),0 0 0 4px var(--ink)}
+.cell:hover,.cell:focus-visible{transform:scale(1.22);outline:none;z-index:4}
+/* a double-booked day carries a dot, ringed in the page ground so it reads on any step */
+.cell.clash::after{content:"";position:absolute;top:-3px;right:-3px;width:8px;height:8px;
+  border-radius:50%;background:var(--clash);box-shadow:0 0 0 2px var(--bg)}
+.wclash{font-family:'Bebas Neue',sans-serif;font-size:15px;letter-spacing:.04em;
+  text-align:center;color:var(--clash)}
+.track{display:block;height:6px;background:var(--lv0);overflow:hidden;min-width:0}
+.fill{display:block;height:100%;background:var(--lv3)}
+.srow.now .fill{background:var(--ink)}
+.whrs{font-family:'Bebas Neue',sans-serif;font-size:15px;letter-spacing:.04em;
+  text-align:right;color:var(--body)}
+.mlabel{font-family:'Bebas Neue',sans-serif;font-size:15px;letter-spacing:.1em;
+  color:var(--mid);padding:20px 0 8px;border-top:1px solid var(--rule);margin-top:12px}
+.mlabel.first{border-top:0;margin-top:0;padding-top:0}
+
+/* ─────────── LEGEND ─────────── */
+.scale{display:flex;flex-wrap:wrap;align-items:center;gap:10px 14px;
+  max-width:1180px;margin:30px auto 0;
+  font-family:'Bebas Neue',sans-serif;font-size:15px;letter-spacing:.04em;color:var(--body)}
+.scale .sw{display:inline-flex;align-items:center;gap:6px}
+.scale i{width:14px;height:14px;border-radius:2px;display:block;background:var(--lv0)}
+.scale i.dot{width:9px;height:9px;border-radius:50%;background:var(--clash)}
+.scale i.sq-today{box-shadow:0 0 0 2px var(--bg),0 0 0 3px var(--ink);background:var(--lv0)}
+.scale .br{flex-basis:100%;height:0}
+
+/* ─────────── NOTES ─────────── */
+.notes{max-width:68ch;margin:70px auto 0;color:var(--body);font-size:15px;line-height:1.55;
+  display:grid;gap:12px}
+.notes b{color:var(--ink);font-variation-settings:"wght" 600}
+
+/* ─────────── TOOLTIP ─────────── */
+#tip{position:fixed;z-index:80;pointer-events:none;opacity:0;transition:opacity .14s ease;
+  background:var(--ink);color:var(--bg);
+  font-family:'Bebas Neue',sans-serif;font-size:15px;letter-spacing:.04em;
+  padding:8px 11px;white-space:nowrap;line-height:1.5}
+#tip.on{opacity:1}
+#tip .cl{color:#E8A68E}
+
+/* ─────────── FOOTER ─────────── */
+footer{padding:0 var(--gutter) 56px;margin-top:clamp(70px,12vh,130px)}
+.f-inner{max-width:1180px;margin:0 auto}
+.f-rule{height:1px;background:var(--mid);opacity:.49;margin:38px 0}
+.f-base{display:flex;justify-content:space-between;gap:16px;color:var(--body);flex-wrap:wrap}
+
+/* ─────────── RESPONSIVE ─────────── */
+@media(max-width:900px){
+  .srow{grid-template-columns:3.2rem repeat(7,minmax(0,1fr)) 1.7rem 3rem;gap:3px}
+  .track{display:none}
+}
+@media(max-width:560px){
+  :root{--gutter:18px}
+  .srow{grid-template-columns:2.4rem repeat(7,minmax(0,1fr)) 1.4rem 2.6rem;gap:2px}
+  .cell{font-size:10px}
+  .wklabel,.whrs{font-size:13px}
+  .nav-link{font-size:15px}
+  .nav-links{gap:16px}
+}
+@media (prefers-reduced-motion: reduce){
+  html{scroll-behavior:auto}
+  *,*::before,*::after{transition-duration:.01ms !important;animation:none !important}
+}
+</style>
+</head>
+<body>
+<a class="skip" href="#grid">Skip to the grid</a>
+
+<nav>
+  <a class="monogram" href="../" aria-label="Raj Aaryaman Patra, home">RAP</a>
+  <div class="nav-links">
+    <a class="nav-link" href="../#work">Work</a>
+    <a class="nav-link" href="../#tools">Tools</a>
+    <a class="nav-link" href="../#about">About</a>
+    <span class="nav-sep" aria-hidden="true"></span>
+    <a class="nav-link nav-ext" href="https://github.com/RajArPatra" target="_blank" rel="noopener">GitHub</a>
+  </div>
+</nav>
+
+<main>
+  <div class="page-head">
+    <a class="back meta" href="../#work">← Back to work</a>
+    <h1 class="page-title">Week Load</h1>
+    <p class="page-sub">How full each week of my term actually is, read straight off my calendar.
+      One row per week, one cell per day, darker where the day is fuller. Hours and counts only —
+      no titles, no places, no people.</p>
+  </div>
+
+  <div class="head-rule">
+    <span class="hand">[ week by week ]</span>
+    <span class="meta count" id="rangeLabel"></span>
+  </div>
+
+  <div class="spine" id="grid"></div>
+
+  <div class="scale">
+    <span>Hours booked in a day</span>
+    <span class="sw"><i></i>none</span>
+    <span class="sw"><i style="background:var(--lv1)"></i>under 2</span>
+    <span class="sw"><i style="background:var(--lv2)"></i>2–4</span>
+    <span class="sw"><i style="background:var(--lv3)"></i>4–6</span>
+    <span class="sw"><i style="background:var(--lv4)"></i>6 plus</span>
+    <span class="br"></span>
+    <span class="sw"><i class="dot"></i>day with a double-booking</span>
+    <span class="sw"><i class="sq-today"></i>today</span>
+  </div>
+
+  <div class="notes">
+    <p><b>What counts as a double-booking.</b> Two different events overlapping by more than five
+      minutes. The same event entered twice is merged rather than counted as a clash, and so are
+      overlaps with anything marked Free.</p>
+    <p><b>How a day is counted.</b> Overlapping events are merged for the hours, so a double-booked
+      hour is still one hour. Only time between 7:00 and 23:00 counts, so an overnight or multi-day
+      block reads as a full day rather than 24 hours of meetings. Public holiday and birthday
+      calendars are left out.</p>
+    <p id="tailNote"></p>
+  </div>
+</main>
+
+<footer>
+  <div class="f-inner">
+    <div class="f-rule"></div>
+    <div class="f-base">
+      <span class="meta">© 2026 Raj Aaryaman Patra</span>
+      <span class="meta" id="stamp"></span>
+    </div>
+  </div>
+</footer>
+
+<div id="tip" role="status" aria-live="polite"></div>
+
+<script>
+const DATA = {"days":{"2026-08-03":[0.0,0,0,0,0,0],"2026-08-04":[0.0,0,0,0,0,0],"2026-08-05":[0.0,0,0,0,0,0],"2026-08-06":[1.5,1,1,0,0,0],"2026-08-07":[8.9,2,2,0,0,0],"2026-08-08":[1.6,0,1,0,0,0],"2026-08-09":[0.0,0,0,0,0,0],"2026-08-10":[0.0,0,0,0,0,0],"2026-08-11":[0.0,0,0,0,0,0],"2026-08-12":[0.0,1,1,0,0,0],"2026-08-13":[0.0,0,1,0,0,0],"2026-08-14":[0.0,0,0,0,0,0],"2026-08-15":[0.0,0,0,0,0,0],"2026-08-16":[0.0,0,0,0,0,0],"2026-08-17":[0.0,0,0,0,0,0],"2026-08-18":[0.0,0,0,0,0,0],"2026-08-19":[9.0,1,1,0,0,0],"2026-08-20":[9.0,2,1,0,0,0],"2026-08-21":[7.0,1,1,0,0,0],"2026-08-22":[0.0,0,0,0,0,0],"2026-08-23":[0.0,0,0,0,0,0],"2026-08-24":[0.0,0,0,0,0,0],"2026-08-25":[0.0,0,0,0,0,0],"2026-08-26":[1.0,1,1,0,0,0],"2026-08-27":[0.0,0,0,0,0,0],"2026-08-28":[0.0,0,0,0,0,0],"2026-08-29":[0.0,0,0,0,0,0],"2026-08-30":[0.0,0,0,0,0,0],"2026-08-31":[0.0,0,0,0,0,0],"2026-09-01":[3.5,2,1,1,1,2],"2026-09-02":[0.0,0,0,1,0,0],"2026-09-03":[3.0,1,1,0,0,0],"2026-09-04":[5.5,2,2,0,0,0],"2026-09-05":[1.5,1,1,0,0,0],"2026-09-06":[0.0,0,0,0,0,0],"2026-09-07":[1.0,1,1,0,0,0],"2026-09-08":[4.0,3,1,0,0,0],"2026-09-09":[3.0,1,1,0,0,0],"2026-09-10":[3.0,1,1,0,0,0],"2026-09-11":[3.0,1,1,0,0,0],"2026-09-12":[0.0,0,0,0,0,0],"2026-09-13":[1.0,1,1,0,0,0],"2026-09-14":[6.0,2,2,0,0,0],"2026-09-15":[8.2,5,4,0,0,0],"2026-09-16":[6.0,2,2,0,0,0],"2026-09-17":[6.8,3,3,0,0,0],"2026-09-18":[7.0,4,2,0,1,2],"2026-09-19":[0.0,0,0,0,0,0],"2026-09-20":[0.0,0,0,0,0,0],"2026-09-21":[6.8,4,4,0,0,0],"2026-09-22":[4.0,3,3,0,0,0],"2026-09-23":[8.5,4,3,0,0,0],"2026-09-24":[4.5,5,3,0,2,4],"2026-09-25":[5.7,6,4,0,1,2],"2026-09-26":[9.8,2,2,0,0,0],"2026-09-27":[2.0,1,1,0,0,0],"2026-09-28":[5.8,5,4,0,1,2],"2026-09-29":[7.0,5,5,0,0,0],"2026-09-30":[4.0,2,3,0,0,0],"2026-10-01":[4.8,6,3,0,2,5],"2026-10-02":[10.0,5,4,0,1,2],"2026-10-03":[16.0,0,1,0,0,0],"2026-10-04":[9.5,2,2,0,0,0],"2026-10-05":[7.2,9,4,0,2,4],"2026-10-06":[7.5,6,6,1,0,0],"2026-10-07":[4.8,4,3,0,1,2],"2026-10-08":[7.6,11,5,3,2,5],"2026-10-09":[6.0,6,5,1,1,2],"2026-10-10":[5.5,2,1,1,0,0],"2026-10-11":[0.1,1,2,0,0,0],"2026-10-12":[6.5,6,4,0,0,0],"2026-10-13":[7.4,7,5,0,1,2],"2026-10-14":[3.5,4,4,0,0,0],"2026-10-15":[7.5,5,4,0,1,2],"2026-10-16":[4.8,5,4,0,1,2],"2026-10-17":[2.8,1,1,0,0,0],"2026-10-18":[0.0,0,0,0,0,0],"2026-10-19":[6.8,5,5,0,0,0],"2026-10-20":[5.3,7,5,0,1,3],"2026-10-21":[0.0,0,0,0,0,0],"2026-10-22":[5.5,7,5,0,2,4],"2026-10-23":[6.0,6,5,0,0,0],"2026-10-24":[13.0,1,1,0,0,0],"2026-10-25":[0.0,0,0,0,0,0],"2026-10-26":[5.5,3,3,0,0,0],"2026-10-27":[8.0,6,5,0,1,2],"2026-10-28":[0.0,0,0,0,0,0],"2026-10-29":[3.5,3,3,0,0,0],"2026-10-30":[4.5,3,3,0,0,0],"2026-10-31":[2.0,1,1,0,0,0],"2026-11-01":[0.0,0,1,0,0,0],"2026-11-02":[5.5,3,3,0,0,0],"2026-11-03":[4.0,3,3,0,0,0],"2026-11-04":[8.0,1,1,0,0,0],"2026-11-05":[3.5,3,3,0,0,0],"2026-11-06":[4.5,3,3,0,0,0],"2026-11-07":[0.0,0,0,0,0,0],"2026-11-08":[0.0,0,0,0,0,0],"2026-11-09":[4.5,2,2,0,0,0],"2026-11-10":[3.0,2,2,0,0,0],"2026-11-11":[1.0,1,1,0,0,0],"2026-11-12":[2.5,2,2,0,0,0],"2026-11-13":[4.5,3,3,0,0,0],"2026-11-14":[0.0,0,0,0,0,0],"2026-11-15":[0.0,0,0,0,0,0],"2026-11-16":[4.5,2,2,0,0,0],"2026-11-17":[3.0,2,2,0,0,0],"2026-11-18":[1.0,1,1,1,0,0],"2026-11-19":[2.5,2,2,0,0,0],"2026-11-20":[4.5,3,3,0,0,0],"2026-11-21":[0.0,0,0,0,0,0],"2026-11-22":[0.0,0,0,0,0,0],"2026-11-23":[3.0,1,1,0,0,0],"2026-11-24":[0.0,0,0,0,0,0],"2026-11-25":[0.0,0,0,0,0,0],"2026-11-26":[0.0,0,0,0,0,0],"2026-11-27":[0.0,0,0,0,0,0],"2026-11-28":[0.0,0,0,0,0,0],"2026-11-29":[0.0,0,0,0,0,0],"2026-11-30":[4.5,2,2,0,0,0],"2026-12-01":[3.0,2,2,0,0,0],"2026-12-02":[0.0,0,0,0,0,0],"2026-12-03":[2.5,2,2,0,0,0],"2026-12-04":[8.5,4,1,0,1,2],"2026-12-05":[0.0,0,0,0,0,0],"2026-12-06":[0.0,0,0,0,0,0],"2026-12-07":[0.0,0,0,1,0,0],"2026-12-08":[0.0,0,0,0,0,0],"2026-12-09":[0.0,0,0,0,0,0],"2026-12-10":[0.0,0,0,0,0,0],"2026-12-11":[0.0,0,0,0,0,0],"2026-12-12":[0.0,0,0,0,0,0],"2026-12-13":[0.0,0,0,0,0,0],"2026-12-14":[0.0,0,0,0,0,0],"2026-12-15":[0.0,0,0,0,0,0],"2026-12-16":[0.0,0,0,0,0,0],"2026-12-17":[0.0,0,0,0,0,0],"2026-12-18":[0.0,0,0,0,0,0],"2026-12-19":[0.0,0,0,0,0,0],"2026-12-20":[0.0,0,0,0,0,0]},"weeks":[{"w":"2026-08-03","h":12.0,"n":3,"b":4,"a":0,"c":0,"d":3},{"w":"2026-08-10","h":0.0,"n":1,"b":2,"a":0,"c":0,"d":1},{"w":"2026-08-17","h":25.0,"n":4,"b":3,"a":0,"c":0,"d":3},{"w":"2026-08-24","h":1.0,"n":1,"b":1,"a":0,"c":0,"d":1},{"w":"2026-08-31","h":13.5,"n":6,"b":5,"a":2,"c":1,"d":5},{"w":"2026-09-07","h":15.0,"n":8,"b":6,"a":0,"c":0,"d":6},{"w":"2026-09-14","h":34.0,"n":16,"b":13,"a":0,"c":1,"d":5},{"w":"2026-09-21","h":41.3,"n":25,"b":20,"a":0,"c":3,"d":7},{"w":"2026-09-28","h":57.1,"n":25,"b":22,"a":0,"c":4,"d":7},{"w":"2026-10-05","h":38.7,"n":39,"b":26,"a":6,"c":6,"d":7},{"w":"2026-10-12","h":32.5,"n":28,"b":22,"a":0,"c":3,"d":6},{"w":"2026-10-19","h":36.6,"n":26,"b":21,"a":0,"c":3,"d":5},{"w":"2026-10-26","h":23.5,"n":16,"b":16,"a":0,"c":1,"d":5},{"w":"2026-11-02","h":25.5,"n":13,"b":13,"a":0,"c":0,"d":5},{"w":"2026-11-09","h":15.5,"n":10,"b":10,"a":0,"c":0,"d":5},{"w":"2026-11-16","h":15.5,"n":10,"b":10,"a":1,"c":0,"d":5},{"w":"2026-11-23","h":3.0,"n":1,"b":1,"a":0,"c":0,"d":1},{"w":"2026-11-30","h":18.5,"n":10,"b":7,"a":0,"c":1,"d":4},{"w":"2026-12-07","h":0.0,"n":0,"b":0,"a":1,"c":0,"d":1},{"w":"2026-12-14","h":0.0,"n":0,"b":0,"a":0,"c":0,"d":0}],"stats":{"today":"2026-10-08","from":"2026-08-03","to":"2026-12-20","thisWeek":{"w":"2026-10-05","h":38.7,"n":39,"b":26,"a":6,"c":6,"d":7},"curRank":3,"nActiveWeeks":19,"medianWeekH":18.5,"peak":{"w":"2026-09-28","h":57.1,"n":25,"b":22,"a":0,"c":4,"d":7},"totalEvents":242,"totalClashes":23,"clashDays":18,"worstClashWeek":{"w":"2026-10-05","h":38.7,"n":39,"b":26,"a":6,"c":6,"d":7},"daysWithSomething":82,"daysTracked":140,"heavyDays":29,"clearDays":58,"lastEvent":"2026-12-07","dupesRemoved":8,"softSkipped":0}};
+const DOW = ["M","T","W","T","F","S","S"];
+const MON = ["JANUARY","FEBRUARY","MARCH","APRIL","MAY","JUNE","JULY","AUGUST",
+             "SEPTEMBER","OCTOBER","NOVEMBER","DECEMBER"];
+const MONS = ["Jan","Feb","Mar","Apr","May","Jun","Jul","Aug","Sep","Oct","Nov","Dec"];
+const DAYS = ["Sunday","Monday","Tuesday","Wednesday","Thursday","Friday","Saturday"];
+
+const d = i => { const [y,m,dd] = i.split("-").map(Number); return new Date(y,m-1,dd); };
+const iso = t => t.getFullYear()+"-"+String(t.getMonth()+1).padStart(2,"0")+"-"+String(t.getDate()).padStart(2,"0");
+const short = i => { const t = d(i); return MONS[t.getMonth()]+" "+t.getDate(); };
+const plural = (n,w) => n+" "+w+(n===1?"":"s");
+
+// [hours, events, blocks, allDay, clashes, events caught in them]
+// four load steps, to match the ramp the rest of the site already uses
+const lvl = ([h,n,b,a]) => h>=6?4 : h>=4?3 : h>=2?2 : (h>0||n>0||a>0)?1 : 0;
+const parts = ([h,n,b,a]) => { const p=[];
+  if (h>0) p.push(h.toFixed(1)+" h booked");
+  if (n>0) p.push(plural(n,"event"));
+  if (a>0) p.push(a+" all-day");
+  return p; };
+
+const S = DATA.stats, TODAY = S.today;
+document.getElementById("rangeLabel").textContent =
+  short(S.from)+" – "+short(S.to)+", "+d(S.to).getFullYear();
+document.getElementById("stamp").textContent = "Calendar read "+short(S.today)+", "+d(S.today).getFullYear();
+
+const maxH = Math.max(...DATA.weeks.map(w => w.h), 1);
+let html = `<div class="srow dowrow"><span></span>${DOW.map(x=>`<span class="dow">${x}</span>`).join("")}<span></span><span></span><span></span></div>`;
+let seenMonth = null;
+
+for (const w of DATA.weeks) {
+  const mon = d(w.w);
+  for (let i=0;i<7;i++){
+    const t = new Date(mon); t.setDate(mon.getDate()+i);
+    const key = t.getFullYear()+"-"+t.getMonth();
+    if (key!==seenMonth && (seenMonth===null || t.getDate()<=7)) {
+      html += `<div class="mlabel${seenMonth===null?" first":""}">${MON[t.getMonth()]}</div>`;
+      seenMonth = key; break;
+    }
+  }
+  let cells = "";
+  for (let i=0;i<7;i++){
+    const t = new Date(mon); t.setDate(mon.getDate()+i);
+    const k = iso(t), rec = DATA.days[k];
+    if (!rec) { cells += `<span class="cell out" aria-hidden="true"></span>`; continue; }
+    const p = parts(rec), cl = rec[4];
+    const say = (p.length ? p.join(", ") : "nothing scheduled")
+      + (cl ? ", "+plural(cl,"double-booking") : "");
+    cells += `<button class="cell${k===TODAY?" today":""}${cl?" clash":""}" data-lv="${lvl(rec)}"
+      data-k="${k}" aria-label="${DAYS[t.getDay()]} ${MONS[t.getMonth()]} ${t.getDate()}: ${say}"
+      >${t.getDate()}</button>`;
+  }
+  html += `<div class="srow${w.w===S.thisWeek.w?" now":""}">
+    <span class="wklabel">${short(w.w)}</span>${cells}
+    <span class="wclash">${w.c || ""}</span>
+    <span class="track"><span class="fill" style="width:${(100*w.h/maxH).toFixed(1)}%"></span></span>
+    <span class="whrs">${w.h>0?w.h.toFixed(1):"—"}</span></div>`;
+}
+const grid = document.getElementById("grid");
+grid.innerHTML = html;
+
+document.getElementById("tailNote").innerHTML =
+  `<b>Nothing on the calendar after ${short(S.lastEvent)}</b>, so the last rows are empty rather
+   than free. Weeks before ${short(S.from)} are left out — the calendar was barely used then.
+   ${S.dupesRemoved} duplicate entries were merged away before anything was counted.`;
+
+/* ---------- tooltip ---------- */
+const tip = document.getElementById("tip");
+function showTip(el){
+  const rec = DATA.days[el.dataset.k]; if (!rec) return;
+  const t = d(el.dataset.k), p = parts(rec), cl = rec[4], ce = rec[5];
+  tip.innerHTML = `${DAYS[t.getDay()].slice(0,3)} ${MONS[t.getMonth()]} ${t.getDate()}<br>`
+    + (p.length ? p.join(" · ") : "nothing scheduled")
+    + (cl ? `<br><span class="cl">${plural(cl,"clash")} · ${ce} events overlapping</span>` : "");
+  const r = el.getBoundingClientRect();
+  tip.classList.add("on");
+  const tr = tip.getBoundingClientRect();
+  const x = Math.max(8, Math.min(r.left + r.width/2 - tr.width/2, innerWidth - tr.width - 8));
+  let y = r.top - tr.height - 10; if (y < 8) y = r.bottom + 10;
+  tip.style.left = x+"px"; tip.style.top = y+"px";
+}
+const hideTip = () => tip.classList.remove("on");
+grid.addEventListener("pointerover", e => { const c=e.target.closest(".cell[data-k]"); c?showTip(c):hideTip(); });
+grid.addEventListener("pointerleave", hideTip);
+grid.addEventListener("focusin", e => { const c=e.target.closest(".cell[data-k]"); if(c) showTip(c); });
+grid.addEventListener("focusout", hideTip);
+addEventListener("scroll", hideTip, {passive:true});
+</script>
+</body>
+</html>
