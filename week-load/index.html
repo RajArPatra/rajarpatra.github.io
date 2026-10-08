@@ -3,12 +3,12 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Week Load — Raj Aaryaman Patra</title>
-<meta name="description" content="How full each week of the term is, drawn from my calendar. Hours and counts only, no event details.">
+<title>Week Load | Raj Aaryaman Patra</title>
+<meta name="description" content="Weekly calendar load for the term. Hours and counts only.">
 <link rel="icon" type="image/png" sizes="32x32" href="../favicon.png">
 <link rel="apple-touch-icon" sizes="180x180" href="../apple-touch-icon.png">
 <meta property="og:title" content="Week Load">
-<meta property="og:description" content="How full each week of the term is, drawn from my calendar. Hours and counts only, no event details.">
+<meta property="og:description" content="Weekly calendar load for the term. Hours and counts only.">
 <meta property="og:image" content="https://rajarpatra.github.io/apple-touch-icon.png">
 <meta property="og:url" content="https://rajarpatra.github.io/week-load/">
 <meta property="og:type" content="article">
@@ -73,7 +73,6 @@ main{padding:0 var(--gutter)}
 .back:hover{color:var(--ink)}
 .page-title{font-size:clamp(34px,6.2vw,80px);line-height:1;text-transform:uppercase;
   font-variation-settings:"wght" 400;text-wrap:balance}
-.page-sub{margin-top:20px;max-width:46ch;color:var(--body);font-size:17px;line-height:1.45}
 .head-rule{display:flex;align-items:baseline;gap:16px;margin:46px 0 30px;
   padding-bottom:12px;border-bottom:1px solid var(--rule);max-width:1180px}
 .head-rule .hand{font-size:22px}
@@ -130,11 +129,6 @@ main{padding:0 var(--gutter)}
 .scale i.sq-today{box-shadow:0 0 0 2px var(--bg),0 0 0 3px var(--ink);background:var(--lv0)}
 .scale .br{flex-basis:100%;height:0}
 
-/* ─────────── NOTES ─────────── */
-.notes{max-width:68ch;margin:70px auto 0;color:var(--body);font-size:15px;line-height:1.55;
-  display:grid;gap:12px}
-.notes b{color:var(--ink);font-variation-settings:"wght" 600}
-
 /* ─────────── TOOLTIP ─────────── */
 #tip{position:fixed;z-index:80;pointer-events:none;opacity:0;transition:opacity .14s ease;
   background:var(--ink);color:var(--bg);
@@ -186,9 +180,6 @@ footer{padding:0 var(--gutter) 56px;margin-top:clamp(70px,12vh,130px)}
   <div class="page-head">
     <a class="back meta" href="../#work">← Back to work</a>
     <h1 class="page-title">Week Load</h1>
-    <p class="page-sub">How full each week of my term actually is, read straight off my calendar.
-      One row per week, one cell per day, darker where the day is fuller. Hours and counts only —
-      no titles, no places, no people.</p>
   </div>
 
   <div class="head-rule">
@@ -202,24 +193,14 @@ footer{padding:0 var(--gutter) 56px;margin-top:clamp(70px,12vh,130px)}
     <span>Hours booked in a day</span>
     <span class="sw"><i></i>none</span>
     <span class="sw"><i style="background:var(--lv1)"></i>under 2</span>
-    <span class="sw"><i style="background:var(--lv2)"></i>2–4</span>
-    <span class="sw"><i style="background:var(--lv3)"></i>4–6</span>
+    <span class="sw"><i style="background:var(--lv2)"></i>2 to 4</span>
+    <span class="sw"><i style="background:var(--lv3)"></i>4 to 6</span>
     <span class="sw"><i style="background:var(--lv4)"></i>6 plus</span>
     <span class="br"></span>
-    <span class="sw"><i class="dot"></i>day with a double-booking</span>
+    <span class="sw"><i class="dot"></i>day with two things at once</span>
     <span class="sw"><i class="sq-today"></i>today</span>
   </div>
 
-  <div class="notes">
-    <p><b>What counts as a double-booking.</b> Two different events overlapping by more than five
-      minutes. The same event entered twice is merged rather than counted as a clash, and so are
-      overlaps with anything marked Free.</p>
-    <p><b>How a day is counted.</b> Overlapping events are merged for the hours, so a double-booked
-      hour is still one hour. Only time between 7:00 and 23:00 counts, so an overnight or multi-day
-      block reads as a full day rather than 24 hours of meetings. Public holiday and birthday
-      calendars are left out.</p>
-    <p id="tailNote"></p>
-  </div>
 </main>
 
 <footer>
@@ -253,12 +234,12 @@ const lvl = ([h,n,b,a]) => h>=6?4 : h>=4?3 : h>=2?2 : (h>0||n>0||a>0)?1 : 0;
 const parts = ([h,n,b,a]) => { const p=[];
   if (h>0) p.push(h.toFixed(1)+" h booked");
   if (n>0) p.push(plural(n,"event"));
-  if (a>0) p.push(a+" all-day");
+  if (a>0) p.push(a+" all day");
   return p; };
 
 const S = DATA.stats, TODAY = S.today;
 document.getElementById("rangeLabel").textContent =
-  short(S.from)+" – "+short(S.to)+", "+d(S.to).getFullYear();
+  short(S.from)+" to "+short(S.to)+", "+d(S.to).getFullYear();
 document.getElementById("stamp").textContent = "Calendar read "+short(S.today)+", "+d(S.today).getFullYear();
 
 const maxH = Math.max(...DATA.weeks.map(w => w.h), 1);
@@ -282,7 +263,7 @@ for (const w of DATA.weeks) {
     if (!rec) { cells += `<span class="cell out" aria-hidden="true"></span>`; continue; }
     const p = parts(rec), cl = rec[4];
     const say = (p.length ? p.join(", ") : "nothing scheduled")
-      + (cl ? ", "+plural(cl,"double-booking") : "");
+      + (cl ? ", "+plural(cl,"clash") : "");
     cells += `<button class="cell${k===TODAY?" today":""}${cl?" clash":""}" data-lv="${lvl(rec)}"
       data-k="${k}" aria-label="${DAYS[t.getDay()]} ${MONS[t.getMonth()]} ${t.getDate()}: ${say}"
       >${t.getDate()}</button>`;
@@ -291,15 +272,10 @@ for (const w of DATA.weeks) {
     <span class="wklabel">${short(w.w)}</span>${cells}
     <span class="wclash">${w.c || ""}</span>
     <span class="track"><span class="fill" style="width:${(100*w.h/maxH).toFixed(1)}%"></span></span>
-    <span class="whrs">${w.h>0?w.h.toFixed(1):"—"}</span></div>`;
+    <span class="whrs">${w.h>0?w.h.toFixed(1):""}</span></div>`;
 }
 const grid = document.getElementById("grid");
 grid.innerHTML = html;
-
-document.getElementById("tailNote").innerHTML =
-  `<b>Nothing on the calendar after ${short(S.lastEvent)}</b>, so the last rows are empty rather
-   than free. Weeks before ${short(S.from)} are left out — the calendar was barely used then.
-   ${S.dupesRemoved} duplicate entries were merged away before anything was counted.`;
 
 /* ---------- tooltip ---------- */
 const tip = document.getElementById("tip");
