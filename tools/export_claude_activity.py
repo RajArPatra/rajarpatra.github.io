@@ -9,9 +9,12 @@ content, file paths, project names or branch names reach activity.json.
 Metric definitions are matched to the Claude Code dashboard:
   sessions   distinct sessionId values
   messages   records of type user or assistant
-  tokens     input_tokens + output_tokens, summed across every usage record
-             without deduplicating by message id (this is what the dashboard
-             reports; deduplicating gives a visibly lower number)
+  tokens     input + output + cache_creation + cache_read, summed across every
+             usage record without deduplicating by message id. Cache reads
+             dominate this total, because each turn re-reads the whole cached
+             context; that is what the dashboard reports.
+  tokens_new input_tokens + output_tokens only, i.e. tokens actually generated
+             rather than re-read from cache. A far smaller, stricter number.
   peak_hour  the hour a session most often STARTS, not the busiest hour
   model      most frequently seen message.model
 
@@ -35,7 +38,7 @@ def main():
     days = collections.defaultdict(lambda: {"sessions": set(), "prompts": 0})
     sessions, models = set(), collections.Counter()
     starts = {}
-    messages = tokens = 0
+    messages = tokens = tokens_new = 0
 
     files = glob.glob(SRC, recursive=True)
     if not files:
@@ -58,7 +61,11 @@ def main():
                         models[mdl] += 1
                     use = msg.get("usage")
                     if isinstance(use, dict):
-                        tokens += use.get("input_tokens", 0) + use.get("output_tokens", 0)
+                        new = use.get("input_tokens", 0) + use.get("output_tokens", 0)
+                        tokens_new += new
+                        tokens += (new
+                                   + use.get("cache_creation_input_tokens", 0)
+                                   + use.get("cache_read_input_tokens", 0))
                 if not ts:
                     continue
                 try:
@@ -87,6 +94,7 @@ def main():
             "sessions": len(sessions),
             "messages": messages,
             "tokens": tokens,
+            "tokens_new": tokens_new,
             "active_days": sum(1 for v in days.values() if v["prompts"] or v["sessions"]),
             "peak_hour": peak,
             "model": pretty_model(top_model),
@@ -99,7 +107,7 @@ def main():
 
     t = out["totals"]
     print(f"  sessions {t['sessions']}   messages {t['messages']:,}   "
-          f"tokens {t['tokens']/1e6:.2f}M")
+          f"tokens {t['tokens']/1e9:.2f}B (new {t['tokens_new']/1e6:.2f}M)")
     print(f"  active days {t['active_days']}   peak hour {t['peak_hour']:02d}:00   "
           f"model {t['model']}   ~{t['moby_dicks']}x Moby-Dick")
 

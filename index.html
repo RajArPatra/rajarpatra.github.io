@@ -558,6 +558,7 @@ footer{padding:0 var(--gutter) 56px}
     }
 
     var compact=function(n){
+      if(n>=1e9) return (Math.floor(n/1e8)/10).toFixed(1)+'B';
       if(n>=1e6) return (Math.floor(n/1e5)/10).toFixed(1)+'M';
       if(n>=1e3) return n.toLocaleString();
       return String(n);
@@ -569,8 +570,50 @@ footer{padding:0 var(--gutter) 56px}
     var stats=document.getElementById('ccStats');
     if(stats) stats.textContent = bits.filter(Boolean).join('  \u00b7  ');
 
+    /* Hover line: one comparison against Breaking Bad or The Sopranos,
+       keyed to the date so it changes once a day and holds steady for
+       every visitor within that day. All figures come from the live
+       totals above; the show counts are fixed. */
+    var BB_EPS=62, SOP_EPS=86, BCS_EPS=63, BOTH_EPS=BB_EPS+SOP_EPS;
+    var TOK_PER_MIN=270;              // a script page is ~1 min and ~270 tokens
+    var BB_SCRIPT=2900*TOK_PER_MIN;   // 62 episodes, ~2,900 min of screen time
+    var SOP_SCRIPT=4730*TOK_PER_MIN;  // 86 episodes, ~4,730 min
+    var num=function(x){ return Math.round(x).toLocaleString(); };
+    var ses=t.sessions||0, msg=t.messages||0, act=t.active_days||0, tok=t.tokens||0;
+
+    var lines=[
+      function(){ return ses<SOP_EPS
+        ? num(ses)+" sessions. The Sopranos needed "+SOP_EPS+" episodes."
+        : num(ses)+" sessions, "+num(ses-SOP_EPS)+" past the entire Sopranos run."; },
+      function(){ return ses<BB_EPS
+        ? num(ses)+" sessions. Breaking Bad told the whole story in "+BB_EPS+"."
+        : num(ses)+" sessions. Breaking Bad told the whole story in "+BB_EPS+" and stopped."; },
+      function(){ return num(ses)+" sessions. Better Call Saul ran "+BCS_EPS+" episodes."; },
+      function(){ return num(ses)+" sessions. Both series together run "+BOTH_EPS
+        +" episodes, so you are at "+Math.round(ses/BOTH_EPS*100)+"%."; },
+      function(){ return compact(tok)+" tokens. "+num(tok/BB_SCRIPT)
+        +" times the full Breaking Bad script, start to finish."; },
+      function(){ return compact(tok)+" tokens. "+num(tok/SOP_SCRIPT)
+        +" times every line spoken in The Sopranos."; },
+      function(){ return compact(tok)+" tokens, "+num(tok/(BB_SCRIPT+SOP_SCRIPT))
+        +" times both scripts put together."; },
+      function(){ return compact(tok)+" tokens. At script density, about "
+        +(tok/TOK_PER_MIN/60/24/365).toFixed(1)+" years of continuous screen time."; },
+      function(){ return num(msg/BB_EPS)+" messages for every Breaking Bad episode ever made."; },
+      function(){ return num(msg/SOP_EPS)+" messages for every episode of The Sopranos."; },
+      function(){ return act<BB_EPS
+        ? num(act)+" active days against "+BB_EPS+" Breaking Bad episodes. "+num(BB_EPS-act)+" to go."
+        : num(act)+" active days, more than Breaking Bad had episodes."; },
+      function(){ return num(act/6)+" active days for each of the six Sopranos seasons."; },
+      function(){ return "Peak hour "+hour12(t.peak_hour||0)
+        +". HBO ran The Sopranos at 9 on Sundays."; }
+    ];
+
     var strip=document.getElementById('activity');
-    if(t.moby_dicks) strip.title = "Roughly "+t.moby_dicks+" times the text of Moby-Dick.";
+    var pick="";
+    try { pick=lines[Math.floor(Date.now()/864e5)%lines.length](); } catch(e){ pick=""; }
+    if(pick) strip.title = pick;
+    else if(t.moby_dicks) strip.title = "Roughly "+t.moby_dicks+" times the text of Moby-Dick.";
     strip.hidden=false;
   }).catch(function(e){ console.warn('activity heatmap skipped:', e.message); });
 
